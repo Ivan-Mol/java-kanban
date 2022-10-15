@@ -16,7 +16,7 @@ public class Task {
     public Task(String name, String description, Status status) {
         this.name = name;
         this.description = description;
-        idCounter = idCounter + 1;
+        idCounter++;
         this.id = idCounter;
         this.status = status;
     }

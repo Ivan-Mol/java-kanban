@@ -24,6 +24,9 @@ public class Main {
         System.out.println(manager.getById(shop.getId()));
         manager.removeById(shop.getId());
         System.out.println(manager.getById(shop.getId()));
+        manager.removeAllSubtasks();
+        manager.removeAllEpics();
+        System.out.println(manager.getById(shop.getId()));
 
     }
 }

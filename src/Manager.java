@@ -1,10 +1,11 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Manager {
-    public final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
 
     public ArrayList<Task> getAllTasks() {
         //Получение списка всех задач.
@@ -28,11 +29,20 @@ public class Manager {
 
     public void removeAllEpics() {
         //Удаление всех задач.
+        for (Epic epic: epics.values()) {
+            ArrayList<Integer> epicSubtasks = epic.getSubtasksId();
+            for (Integer epicSubtask : epicSubtasks) {
+                removeById(epicSubtask);
+            }
+        }
         epics.clear();
     }
 
     public void removeAllSubtasks() {
         //Удаление всех задач.
+        for (Subtask subtask: subtasks.values()) {
+            removeById(subtask.getEpicId());
+        }
         subtasks.clear();
     }
 
@@ -59,7 +69,7 @@ public class Manager {
             epicOfThisSubtask.setStatus(calcEpicStatus(epicOfThisSubtask));
         }
     }
-
+    //Должен ли в updateTask, при обновлении сабтаска обновляться статус у связанного с ним эпика?
     public void updateTask(Task updatedTask) {
         //Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
         if (epics.containsKey(updatedTask.getId())) {
@@ -82,17 +92,18 @@ public class Manager {
         } else return subtasks.get(id);
     }
 
+    //Правильно ли работает removeById? Из описания задачи не очень понятно как должно быть правильно.
+    // Например, сейчас он не удаляет связанные сабтаски при удалении эпика.
+    // Или если удаляешь последний сабтакс у эпика, нужно ли удалять сам эпик? Ведь эпик может быть и без сабтасков.
+    //Должен ли обновляться статус эпика если удаляется сабтаск?
+    //Стоит ли его сделать этот метод отдельным для каждого класса?
     public void removeById(int id) {
         //Удаление по идентификатору.
         if (epics.containsKey(id)) {
             epics.remove(id);
         } else if (tasks.containsKey(id)) {
             epics.remove(id);
-        } else if (subtasks.containsKey(id)) {
-            subtasks.remove(id);
-        } else {
-            System.out.println("такого значения нет");
-        }
+        } else subtasks.remove(id);
     }
 
     public Status calcEpicStatus(Epic epic) {
