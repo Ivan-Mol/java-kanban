@@ -1,3 +1,5 @@
+package model;
+
 public class Task {
     private static int idCounter = 0;
     private final String name;
@@ -43,7 +45,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" + "name = '" + name + '\'' + ", description='"
+        return "model.Task{" + "name = '" + name + '\'' + ", description='"
                 + description + '\'' + ", status = " + status + '}';
     }
 }
