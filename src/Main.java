@@ -1,4 +1,5 @@
-import manager.Manager;
+import manager.Managers;
+import manager.TaskManager;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -6,7 +7,7 @@ import model.Subtask;
 public class Main {
 
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        TaskManager manager = Managers.getDefault();
 
         Epic shop = new Epic("Магазин", "Покупка продуктов");
         manager.createEpic(shop);
@@ -15,9 +16,6 @@ public class Main {
         Subtask sub2 = new Subtask("Напитки", "купить воды", shop.getId());
         manager.createSubtask(sub1);
         manager.createSubtask(sub2);
-
-        System.out.println(sub1);
-        System.out.println(sub2);
 
         Epic sport = new Epic("Спорт", "Записаться в спортзал");
         manager.createEpic(sport);
@@ -28,10 +26,6 @@ public class Main {
 
         System.out.println(manager.getById(shop.getId()));
         manager.removeById(shop.getId());
-        System.out.println(manager.getById(shop.getId()));
-        manager.removeAllSubtasks();
-        manager.removeAllEpics();
-        System.out.println(manager.getById(shop.getId()));
-
+        System.out.println(manager.getHistory());
     }
 }

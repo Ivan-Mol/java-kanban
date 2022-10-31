@@ -9,34 +9,41 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Task> tasks = new HashMap<>();
 
+    private final HistoryManager InMemoryHistoryManager = Managers.getDefaultHistory();
+
+    @Override
     public ArrayList<Task> getAllTasks() {
         //Получение списка всех задач.
         return new ArrayList<>(tasks.values());
     }
 
+    @Override
     public ArrayList<Epic> getAllEpics() {
         //Получение списка всех задач.
         return new ArrayList<>(epics.values());
     }
 
+    @Override
     public ArrayList<Subtask> getAllSubtasks() {
         //Получение списка всех задач.
         return new ArrayList<>(subtasks.values());
     }
 
+    @Override
     public void removeAllTasks() {
         //Удаление всех задач.
         tasks.clear();
     }
 
+    @Override
     public void removeAllEpics() {
         //Удаление всех задач.
-        for (Epic epic: epics.values()) {
+        for (Epic epic : epics.values()) {
             ArrayList<Integer> epicSubtasks = epic.getSubtasksId();
             for (Integer epicSubtask : epicSubtasks) {
                 removeById(epicSubtask);
@@ -45,14 +52,16 @@ public class Manager {
         epics.clear();
     }
 
+    @Override
     public void removeAllSubtasks() {
         //Удаление всех задач.
-        for (Subtask subtask: subtasks.values()) {
+        for (Subtask subtask : subtasks.values()) {
             removeById(subtask.getEpicId());
         }
         subtasks.clear();
     }
 
+    @Override
     public void createTask(Task newTask) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newTask != null) {
@@ -60,6 +69,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void createEpic(Epic newEpic) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newEpic != null) {
@@ -67,6 +77,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void createSubtask(Subtask newSubtask) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newSubtask != null) {
@@ -76,9 +87,9 @@ public class Manager {
             epicOfThisSubtask.setStatus(calcEpicStatus(epicOfThisSubtask));
         }
     }
-    //Должен ли в updateTask, при обновлении сабтаска обновляться статус у связанного с ним эпика?
+
+    @Override
     public void updateTask(Task updatedTask) {
-        //Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
         if (epics.containsKey(updatedTask.getId())) {
             epics.replace(updatedTask.getId(), (Epic) updatedTask);
         } else if (tasks.containsKey(updatedTask.getId())) {
@@ -90,20 +101,22 @@ public class Manager {
         }
     }
 
+    @Override
     public Task getById(int id) {
         //Получение по идентификатору.
         if (epics.containsKey(id)) {
+            InMemoryHistoryManager.add(epics.get(id));
             return epics.get(id);
         } else if (tasks.containsKey(id)) {
+            InMemoryHistoryManager.add(tasks.get(id));
             return tasks.get(id);
-        } else return subtasks.get(id);
+        } else {
+            InMemoryHistoryManager.add(tasks.get(id));
+            return subtasks.get(id);
+        }
     }
 
-    //Правильно ли работает removeById? Из описания задачи не очень понятно как должно быть правильно.
-    // Например, сейчас он не удаляет связанные сабтаски при удалении эпика.
-    // Или если удаляешь последний сабтакс у эпика, нужно ли удалять сам эпик? Ведь эпик может быть и без сабтасков.
-    //Должен ли обновляться статус эпика если удаляется сабтаск?
-    //Стоит ли его сделать этот метод отдельным для каждого класса?
+    @Override
     public void removeById(int id) {
         //Удаление по идентификатору.
         if (epics.containsKey(id)) {
@@ -113,6 +126,7 @@ public class Manager {
         } else subtasks.remove(id);
     }
 
+    @Override
     public Status calcEpicStatus(Epic epic) {
         ArrayList<Status> statuses = new ArrayList<>();
         for (Integer id : epic.getSubtasksId()) {
@@ -131,5 +145,10 @@ public class Manager {
         } else {
             return Status.NEW;
         }
+    }
+
+    @Override
+    public ArrayList<Task> getHistory() {
+        return InMemoryHistoryManager.getHistory();
     }
 }
