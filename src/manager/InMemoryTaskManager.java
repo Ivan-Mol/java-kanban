@@ -6,6 +6,7 @@ import model.Subtask;
 import model.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,19 +18,19 @@ public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager InMemoryHistoryManager = Managers.getDefaultHistory();
 
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public List<Task> getAllTasks() {
         //Получение списка всех задач.
         return new ArrayList<>(tasks.values());
     }
 
     @Override
-    public ArrayList<Epic> getAllEpics() {
+    public List<Epic> getAllEpics() {
         //Получение списка всех задач.
         return new ArrayList<>(epics.values());
     }
 
     @Override
-    public ArrayList<Subtask> getAllSubtasks() {
+    public List<Subtask> getAllSubtasks() {
         //Получение списка всех задач.
         return new ArrayList<>(subtasks.values());
     }
@@ -148,7 +149,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
+    public List<Task> getHistory() {
         return InMemoryHistoryManager.getHistory();
     }
 }

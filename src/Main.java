@@ -19,13 +19,25 @@ public class Main {
 
         Epic sport = new Epic("Спорт", "Записаться в спортзал");
         manager.createEpic(sport);
+        Subtask sub3 = new Subtask("Справка", "Получить справку от врача", sport.getId());
+        Subtask sub4 = new Subtask("Абонемент", "Купить абонемент", Status.IN_PROGRESS, sport.getId());
+        manager.createSubtask(sub3);
+        manager.createSubtask(sub4);
 
-        manager.createSubtask(new Subtask("Справка", "Получить справку от врача", sport.getId()));
-        manager.createSubtask(new Subtask("Абонемент", "Купить абонемент", Status.IN_PROGRESS, sport.getId()));
         System.out.println(manager.getById(sport.getId()));
-
         System.out.println(manager.getById(shop.getId()));
-        manager.removeById(shop.getId());
+
+        manager.getById(sub1.getId());
+        manager.getById(sub2.getId());
+        manager.getById(sub3.getId());
+        manager.getById(sub4.getId());
+        manager.getById(shop.getId());
+        manager.getById(sport.getId());
+        manager.getById(sub1.getId());
+        manager.getById(sub2.getId());
+        System.out.println(manager.getHistory());
+
+        manager.getById(sport.getId());
         System.out.println(manager.getHistory());
     }
 }
