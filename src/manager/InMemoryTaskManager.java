@@ -112,7 +112,7 @@ public class InMemoryTaskManager implements TaskManager {
             InMemoryHistoryManager.add(tasks.get(id));
             return tasks.get(id);
         } else {
-            InMemoryHistoryManager.add(tasks.get(id));
+            InMemoryHistoryManager.add(subtasks.get(id));
             return subtasks.get(id);
         }
     }
@@ -123,8 +123,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.containsKey(id)) {
             epics.remove(id);
         } else if (tasks.containsKey(id)) {
-            epics.remove(id);
-        } else subtasks.remove(id);
+            tasks.remove(id);
+        } else {
+            subtasks.remove(id);
+        }
+        InMemoryHistoryManager.remove(id);
     }
 
     @Override

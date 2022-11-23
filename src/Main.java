@@ -39,5 +39,7 @@ public class Main {
 
         manager.getById(sport.getId());
         System.out.println(manager.getHistory());
+        manager.removeById(shop.getId());
+        System.out.println(manager.getHistory());
     }
 }
