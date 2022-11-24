@@ -3,25 +3,22 @@ package manager;
 import model.Node;
 import model.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
+
     private final CustomLinkedList tasksHistory = new CustomLinkedList();
-    private final HashMap<Integer, Node> nodeMap = new HashMap<>();
 
     @Override
     public void add(Task task) {
-        remove(task.getId());
-        nodeMap.put(task.getId(),tasksHistory.linkLast(task));
+        tasksHistory.linkLast(task);
     }
 
     @Override
     public void remove(int id) {
-        Node node = nodeMap.get(id);
-        if (node!=null){
-            tasksHistory.removeNode(node);
-            nodeMap.remove(id);
-        }
+        tasksHistory.removeNode(id);
     }
 
     @Override
@@ -30,40 +27,50 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public static class CustomLinkedList {
+
+        private final HashMap<Integer, Node> nodeMap = new HashMap<>();
         private Node head;
         private Node tail;
-        public Node linkLast(Task task){
+
+        public Node linkLast(Task task) {
+            removeNode(task.getId());
             Node currNode = new Node(task);
-            if (tail==null){
+            nodeMap.put(task.getId(), currNode);
+            if (tail == null) {
                 head = currNode;
                 tail = currNode;
-            }else {
+            } else {
                 currNode.setPrevNode(tail);
                 tail.setNextNode(currNode);
                 tail = currNode;
             }
             return currNode;
         }
-        public void removeNode(Node node){
-            Node prev = node.getPrevNode();
-            Node next = node.getNextNode();
-            if (prev!=null){
-                prev.setNextNode(next);
-            }else {
-                head = next;
+
+        public void removeNode(int id) {
+            Node node = nodeMap.get(id);
+            if (node != null) {
+                Node prev = node.getPrevNode();
+                Node next = node.getNextNode();
+                if (prev != null) {
+                    prev.setNextNode(next);
+                } else {
+                    head = next;
+                }
+                if (next != null) {
+                    node.setNextNode(prev);
+                } else {
+                    tail = prev;
+                }
             }
-            if (next!=null){
-                node.setNextNode(prev);
-            }else {
-                tail = prev;
-            }
+
         }
 
-        public ArrayList<Task> getTasks(){
+        public ArrayList<Task> getTasks() {
             ArrayList<Task> tasks = new ArrayList<>();
             tasks.add(head.getCurrentTask());
             Node currNode = head;
-            while (currNode.getNextNode()!=null){
+            while (currNode.getNextNode() != null) {
                 tasks.add(currNode.getNextNode().getCurrentTask());
                 currNode = currNode.getNextNode();
             }

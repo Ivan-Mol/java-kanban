@@ -24,22 +24,22 @@ public class Main {
         manager.createSubtask(sub3);
         manager.createSubtask(sub4);
 
-        System.out.println(manager.getById(sport.getId()));
-        System.out.println(manager.getById(shop.getId()));
+        System.out.println(manager.getEpic(sport.getId()));
+        System.out.println(manager.getEpic(shop.getId()));
 
-        manager.getById(sub1.getId());
-        manager.getById(sub2.getId());
-        manager.getById(sub3.getId());
-        manager.getById(sub4.getId());
-        manager.getById(shop.getId());
-        manager.getById(sport.getId());
-        manager.getById(sub1.getId());
-        manager.getById(sub2.getId());
+        manager.getSubtask(sub1.getId());
+        manager.getSubtask(sub2.getId());
+        manager.getSubtask(sub3.getId());
+        manager.getSubtask(sub4.getId());
+        manager.getEpic(shop.getId());
+        manager.getEpic(sport.getId());
+        manager.getSubtask(sub1.getId());
+        manager.getSubtask(sub2.getId());
         System.out.println(manager.getHistory());
 
-        manager.getById(sport.getId());
+        manager.getEpic(sport.getId());
         System.out.println(manager.getHistory());
-        manager.removeById(shop.getId());
+        manager.removeEpic(shop.getId());
         System.out.println(manager.getHistory());
     }
 }

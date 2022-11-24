@@ -6,6 +6,7 @@ import model.Subtask;
 import model.Task;
 
 import java.util.List;
+
 public interface TaskManager {
 
     List<Task> getAllTasks();
@@ -28,9 +29,17 @@ public interface TaskManager {
 
     void updateTask(Task updatedTask);
 
-    Task getById(int id);
+    Task getEpic(int id);
 
-    void removeById(int id);
+    Task getTask(int id);
+
+    Task getSubtask(int id);
+
+    void removeEpic(int id);
+
+    void removeTask(int id);
+
+    void removeSubtask(int id);
 
     Status calcEpicStatus(Epic epic);
 
