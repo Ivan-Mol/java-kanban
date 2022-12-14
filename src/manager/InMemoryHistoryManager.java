@@ -11,6 +11,23 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private final CustomLinkedList tasksHistory = new CustomLinkedList();
 
+    public static String historyToString(HistoryManager manager) {
+        List<String> idList = new ArrayList<>();
+        for (Task task : manager.getHistory()) {
+            idList.add(Integer.toString(task.getId()));
+        }
+        return String.join(",", idList);
+    }
+
+    static List<Integer> historyFromString(String value) {
+        String[] historyNums = value.split(",");
+        List<Integer> history = new ArrayList<>();
+        for (String historyNum : historyNums) {
+            history.add(Integer.parseInt(historyNum));
+        }
+        return history;
+    }
+
     @Override
     public void add(Task task) {
         tasksHistory.linkLast(task);
@@ -68,11 +85,13 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         public ArrayList<Task> getTasks() {
             ArrayList<Task> tasks = new ArrayList<>();
-            tasks.add(head.getCurrentTask());
-            Node currNode = head;
-            while (currNode.getNextNode() != null) {
-                tasks.add(currNode.getNextNode().getCurrentTask());
-                currNode = currNode.getNextNode();
+            if (head != null) {
+                tasks.add(head.getCurrentTask());
+                Node currNode = head;
+                while (currNode.getNextNode() != null) {
+                    tasks.add(currNode.getNextNode().getCurrentTask());
+                    currNode = currNode.getNextNode();
+                }
             }
             return tasks;
         }

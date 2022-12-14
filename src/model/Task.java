@@ -23,6 +23,25 @@ public class Task {
         this.status = status;
     }
 
+    public Task(int id, String name, Status status, String description) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.description = description;
+    }
+
+    public static Task fromString(String value) {
+        //id,type,name,status,description,epic
+        //2,EPIC,Epic2,DONE,Description epic2,
+        //3,SUBTASK,Sub Task2,DONE,Description sub task3,2
+        String[] values = value.split(",");
+        int id = Integer.parseInt(values[0]);
+        String name = values[2];
+        Status stat = Status.valueOf(values[3]);
+        String decription = values[4];
+        return new Task(id, name, stat, decription);
+    }
+
     public String getName() {
         return name;
     }
@@ -45,7 +64,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "model.Task{" + "name = '" + name + '\'' + ", description='"
-                + description + '\'' + ", status = " + status + '}';
+        return getId() + "," + Type.TASK + "," + getName() + "," + getStatus() + "," + getDescription() + "," + "\n";
     }
+
 }

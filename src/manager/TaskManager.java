@@ -44,4 +44,6 @@ public interface TaskManager {
     Status calcEpicStatus(Epic epic);
 
     List<Task> getHistory();
+
+    HistoryManager getHistoryManager();
 }
