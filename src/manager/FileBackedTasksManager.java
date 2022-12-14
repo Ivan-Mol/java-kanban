@@ -1,6 +1,6 @@
 package manager;
 
-import Exceptions.ManagerSaveException;
+import exceptions.ManagerSaveException;
 import model.*;
 
 import java.io.*;
@@ -34,9 +34,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             return fileBackedTasksManager;
         } catch (IOException e) {
-            System.out.println("Ошибка чтения файла");
+            throw new ManagerSaveException(e);
         }
-        return null;
     }
 
     public Task getTaskFromString(String stringTask) {

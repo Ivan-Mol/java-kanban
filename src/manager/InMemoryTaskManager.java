@@ -104,8 +104,6 @@ public class InMemoryTaskManager implements TaskManager {
             tasks.replace(updatedTask.getId(), updatedTask);
         } else if (subtasks.containsKey(updatedTask.getId())) {
             subtasks.replace(updatedTask.getId(), (Subtask) updatedTask);
-        } else {
-            System.out.println("Что-то пошло не так");
         }
     }
 
