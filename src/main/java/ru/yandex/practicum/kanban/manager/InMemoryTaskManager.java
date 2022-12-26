@@ -1,9 +1,10 @@
-package manager;
+package ru.yandex.practicum.kanban.manager;
 
-import model.Epic;
-import model.Status;
-import model.Subtask;
-import model.Task;
+
+import ru.yandex.practicum.kanban.model.Epic;
+import ru.yandex.practicum.kanban.model.Status;
+import ru.yandex.practicum.kanban.model.Subtask;
+import ru.yandex.practicum.kanban.model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +66,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeAllSubtasks() {
         //Удаление всех Сабтасков.
         for (Subtask subtask : subtasks.values()) {
-            removeSubtask(subtask.getEpicId());
+            removeSubtask(subtask.getId());
         }
     }
 
@@ -89,50 +90,64 @@ public class InMemoryTaskManager implements TaskManager {
     public void createSubtask(Subtask newSubtask) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newSubtask != null) {
-            subtasks.put(newSubtask.getId(), newSubtask);
             Epic epicOfThisSubtask = epics.get(newSubtask.getEpicId());
-            epicOfThisSubtask.addSubtaskId(newSubtask.getId());
-            epicOfThisSubtask.setStatus(calcEpicStatus(epicOfThisSubtask));
+            if (epicOfThisSubtask != null) {
+                subtasks.put(newSubtask.getId(), newSubtask);
+                epicOfThisSubtask.addSubtaskId(newSubtask.getId());
+                epicOfThisSubtask.setStatus(calcEpicStatus(epicOfThisSubtask));
+            }
         }
     }
 
     @Override
     public void updateTask(Task updatedTask) {
-        if (epics.containsKey(updatedTask.getId())) {
-            epics.replace(updatedTask.getId(), (Epic) updatedTask);
-        } else if (tasks.containsKey(updatedTask.getId())) {
-            tasks.replace(updatedTask.getId(), updatedTask);
-        } else if (subtasks.containsKey(updatedTask.getId())) {
-            subtasks.replace(updatedTask.getId(), (Subtask) updatedTask);
+        if (updatedTask != null) {
+            if (epics.containsKey(updatedTask.getId())) {
+                epics.replace(updatedTask.getId(), (Epic) updatedTask);
+            } else if (tasks.containsKey(updatedTask.getId())) {
+                tasks.replace(updatedTask.getId(), updatedTask);
+            } else if (subtasks.containsKey(updatedTask.getId())) {
+                subtasks.replace(updatedTask.getId(), (Subtask) updatedTask);
+            }
         }
     }
 
     @Override
     public Task getEpic(int id) {
         //Получение по идентификатору.
-        inMemoryHistoryManager.add(epics.get(id));
+        if (epics.get(id) != null) {
+            inMemoryHistoryManager.add(epics.get(id));
+        }
         return epics.get(id);
     }
 
     @Override
     public Task getTask(int id) {
         //Получение по идентификатору.
-        inMemoryHistoryManager.add(tasks.get(id));
+        if (tasks.get(id) != null) {
+            inMemoryHistoryManager.add(tasks.get(id));
+        }
         return tasks.get(id);
     }
 
     @Override
     public Task getSubtask(int id) {
         //Получение по идентификатору.
-        inMemoryHistoryManager.add(subtasks.get(id));
+        if (subtasks.get(id) != null) {
+            inMemoryHistoryManager.add(subtasks.get(id));
+        }
         return subtasks.get(id);
     }
 
     @Override
     public void removeEpic(int id) {
         //Удаление по идентификатору.
-        epics.remove(id);
-        inMemoryHistoryManager.remove(id);
+        if (getEpic(id) != null) {
+            Epic epic = (Epic) getEpic(id);
+            epic.getSubtasksId().forEach(subtasks::remove);
+            inMemoryHistoryManager.remove(id);
+            epics.remove(id);
+        }
     }
 
     @Override

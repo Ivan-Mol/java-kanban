@@ -1,4 +1,6 @@
-package model;
+package ru.yandex.practicum.kanban.model;
+
+import java.util.Objects;
 
 public class Task {
     private static int idCounter = 0;
@@ -65,6 +67,19 @@ public class Task {
     @Override
     public String toString() {
         return getId() + "," + Type.TASK + "," + getName() + "," + getStatus() + "," + getDescription() + "," + "\n";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && name.equals(task.name) && description.equals(task.description) && status == task.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, id, status);
     }
 
 }

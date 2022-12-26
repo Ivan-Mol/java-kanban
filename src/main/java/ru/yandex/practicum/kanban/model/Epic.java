@@ -1,6 +1,7 @@
-package model;
+package ru.yandex.practicum.kanban.model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Epic extends Task {
     private final ArrayList<Integer> subtasksId = new ArrayList<>();
@@ -39,5 +40,19 @@ public class Epic extends Task {
 
     public ArrayList<Integer> getSubtasksId() {
         return subtasksId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return subtasksId.equals(epic.subtasksId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subtasksId);
     }
 }

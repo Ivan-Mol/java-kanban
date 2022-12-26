@@ -1,10 +1,11 @@
-package manager;
+package ru.yandex.practicum.kanban.manager;
 
-import exceptions.ManagerSaveException;
-import model.*;
+import ru.yandex.practicum.kanban.exceptions.ManagerSaveException;
+import ru.yandex.practicum.kanban.model.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,9 +27,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     Task task = fileBackedTasksManager.getTaskFromString(stringTask);
                     temporaryTasks.put(Integer.toString(task.getId()), task);
                 } else {
-                    String[] historyString = bufferedReader.readLine().split(",");
-                    for (String id : historyString) {
-                        fileBackedTasksManager.getHistoryManager().add(temporaryTasks.get(id));
+                    String historyLine = bufferedReader.readLine();
+                    if (historyLine != null) {
+                        String[] historyString = historyLine.split(",");
+                        for (String id : historyString) {
+                            fileBackedTasksManager.getHistoryManager().add(temporaryTasks.get(id));
+                        }
                     }
                 }
             }
@@ -73,10 +77,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 bufferedWriter.write(subTask.toString());
             }
             bufferedWriter.write("\n");
-            bufferedWriter.write(InMemoryHistoryManager.historyToString(super.getHistoryManager()));
+            bufferedWriter.write(historyToString(super.getHistoryManager()));
         } catch (IOException e) {
             throw new ManagerSaveException(e);
         }
+    }
+
+    private String historyToString(HistoryManager manager) {
+        List<String> idList = new ArrayList<>();
+        for (Task task : manager.getHistory()) {
+            idList.add(Integer.toString(task.getId()));
+        }
+        return String.join(",", idList);
     }
 
     @Override

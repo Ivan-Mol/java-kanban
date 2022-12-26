@@ -1,7 +1,7 @@
-package manager;
+package ru.yandex.practicum.kanban.manager;
 
-import model.Node;
-import model.Task;
+import ru.yandex.practicum.kanban.model.Node;
+import ru.yandex.practicum.kanban.model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,26 +11,11 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private final CustomLinkedList tasksHistory = new CustomLinkedList();
 
-    public static String historyToString(HistoryManager manager) {
-        List<String> idList = new ArrayList<>();
-        for (Task task : manager.getHistory()) {
-            idList.add(Integer.toString(task.getId()));
-        }
-        return String.join(",", idList);
-    }
-
-    static List<Integer> historyFromString(String value) {
-        String[] historyNums = value.split(",");
-        List<Integer> history = new ArrayList<>();
-        for (String historyNum : historyNums) {
-            history.add(Integer.parseInt(historyNum));
-        }
-        return history;
-    }
-
     @Override
     public void add(Task task) {
-        tasksHistory.linkLast(task);
+        if (task != null) {
+            tasksHistory.linkLast(task);
+        }
     }
 
     @Override

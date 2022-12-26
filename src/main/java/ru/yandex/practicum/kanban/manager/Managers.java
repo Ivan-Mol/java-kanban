@@ -1,4 +1,4 @@
-package manager;
+package ru.yandex.practicum.kanban.manager;
 
 public class Managers {
 

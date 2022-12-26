@@ -1,6 +1,7 @@
-package manager;
+package ru.yandex.practicum.kanban.manager;
 
-import model.Task;
+
+import ru.yandex.practicum.kanban.model.Task;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package model;
+package ru.yandex.practicum.kanban.model;
 
 public enum Type {
     EPIC,

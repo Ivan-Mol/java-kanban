@@ -1,9 +1,10 @@
-package manager;
+package ru.yandex.practicum.kanban.manager;
 
-import model.Epic;
-import model.Status;
-import model.Subtask;
-import model.Task;
+
+import ru.yandex.practicum.kanban.model.Epic;
+import ru.yandex.practicum.kanban.model.Status;
+import ru.yandex.practicum.kanban.model.Subtask;
+import ru.yandex.practicum.kanban.model.Task;
 
 import java.util.List;
 
