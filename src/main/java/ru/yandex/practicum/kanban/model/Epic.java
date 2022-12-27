@@ -1,10 +1,13 @@
 package ru.yandex.practicum.kanban.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
     private final ArrayList<Integer> subtasksId = new ArrayList<>();
+
+    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -14,10 +17,16 @@ public class Epic extends Task {
         super(id, name, status, description);
     }
 
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+
+    }
+
     public static Epic fromString(String value) {
-        //id,type,name,status,description,epic
-        //2,EPIC,Epic2,DONE,Description epic2,
-        //3,SUBTASK,Sub Task2,DONE,Description sub task3,2
+        //id,type,name,status,description,epic,duration,startTime
+        //2,EPIC,Epic2,DONE,Description
+        //3,SUBTASK,Sub Task2,DONE,Description,2
         String[] values = value.split(",");
         int id = Integer.parseInt(values[0]);
         String name = values[2];
@@ -32,7 +41,8 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + "," + "\n";
+        return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + ","
+                + "," + getDuration() + "," + getStartTime() + "\n";
         //id,type,name,status,description,epic
         //1,TASK,Task1,NEW,Description task1,
         //2,EPIC,Epic2,DONE,Description epic2

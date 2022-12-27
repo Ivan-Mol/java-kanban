@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         //fromFile
         FileBackedTasksManager fromFile = FileBackedTasksManager
-                .loadFromFile(new File("C:\\Users\\abyss\\OneDrive\\Рабочий стол\\test\\loadFile.csv"));
+                .loadFromFile(new File("C:\\Users\\abyss\\OneDrive\\Рабочий стол\\test\\loadFileNew.csv"));
         fromFile.save();
     }
 }

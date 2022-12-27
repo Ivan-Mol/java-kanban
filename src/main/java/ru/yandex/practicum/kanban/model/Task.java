@@ -1,5 +1,7 @@
 package ru.yandex.practicum.kanban.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -8,6 +10,8 @@ public class Task {
     private final String description;
     private final int id;
     private Status status;
+    private Duration duration;
+    private LocalDateTime startTime;
 
     public Task(String name, String description) {
         this.name = name;
@@ -60,13 +64,21 @@ public class Task {
         return status;
     }
 
+    public LocalDateTime getEndTime() {
+        if (duration != null & startTime != null) {
+            return startTime.plus(duration);
+        }
+        return null;
+    }
+
     public void setStatus(Status newStatus) {
         this.status = newStatus;
     }
 
     @Override
     public String toString() {
-        return getId() + "," + Type.TASK + "," + getName() + "," + getStatus() + "," + getDescription() + "," + "\n";
+        return getId() + "," + Type.TASK + "," + getName() + "," + getStatus() + "," + getDescription() + ","
+                + "," + getDuration() + "," + getStartTime() + "\n";
     }
 
     @Override
@@ -80,6 +92,22 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hash(name, description, id, status);
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
 }

@@ -1,4 +1,4 @@
-id,type,name,status,description,epic
-1,EPIC,Магазин,NEW,Записаться в спортзал,
+id,type,name,status,description,epic,duration,startTime
+1,EPIC,Магазин,NEW,Записаться в спортзал,,null,null
 
 1

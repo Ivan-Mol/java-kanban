@@ -66,7 +66,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void save() {
         // Создайте метод save без параметров — он будет сохранять текущее состояние менеджера в указанный файл.
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, StandardCharsets.UTF_8))) {
-            bufferedWriter.write("id,type,name,status,description,epic\n");
+            bufferedWriter.write("id,type,name,status,description,epic,duration,startTime\n");
             for (Task task : super.getAllTasks()) {
                 bufferedWriter.write(task.toString());
             }
