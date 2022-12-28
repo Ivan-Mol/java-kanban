@@ -6,6 +6,8 @@ import ru.yandex.practicum.kanban.model.Status;
 import ru.yandex.practicum.kanban.model.Subtask;
 import ru.yandex.practicum.kanban.model.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TaskManager {
@@ -43,6 +45,12 @@ public interface TaskManager {
     void removeSubtask(int id);
 
     Status calcEpicStatus(Epic epic);
+
+    LocalDateTime calcEpicEndTime(Epic epic);
+
+    LocalDateTime calcEpicStartTime(Epic epic);
+
+    Duration calcEpicDuration(Epic epic);
 
     List<Task> getHistory();
 

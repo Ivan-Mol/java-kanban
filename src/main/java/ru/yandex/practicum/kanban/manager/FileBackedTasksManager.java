@@ -5,6 +5,8 @@ import ru.yandex.practicum.kanban.model.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -182,8 +184,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
+    public LocalDateTime calcEpicEndTime(Epic epic) {
+        return super.calcEpicEndTime(epic);
+    }
+
+    @Override
+    public Duration calcEpicDuration(Epic epic) {
+        return super.calcEpicDuration(epic);
+    }
+
+    @Override
     public Status calcEpicStatus(Epic epic) {
         return super.calcEpicStatus(epic);
+    }
+
+    @Override
+    public LocalDateTime calcEpicStartTime(Epic epic) {
+        return super.calcEpicStartTime(epic);
     }
 
     @Override

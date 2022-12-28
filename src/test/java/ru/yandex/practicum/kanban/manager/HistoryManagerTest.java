@@ -24,7 +24,7 @@ public class HistoryManagerTest {
 
     @Test
     public void add_withTwoSameTasks() {
-        Task testTask = new Task("TestTask", "Test Description");
+        Task testTask = new Task("taskTestName", "taskTestDesc");
         List<Task> expectedTasks = List.of(testTask);
         historyManager.add(testTask);
         historyManager.add(testTask);
@@ -33,11 +33,11 @@ public class HistoryManagerTest {
 
     @Test
     public void remove_firstTask() {
-        Task testTask = new Task("TestTask", "Test Description");
+        Task testTask = new Task("taskTestName", "taskTestDesc");
         historyManager.add(testTask);
-        Epic testEpic = new Epic("TestEpic", "Test Description");
+        Epic testEpic = new Epic("epicTestName", "epicTestDesc");
         historyManager.add(testEpic);
-        Subtask testSubtask = new Subtask("тестСабИмя", "СабОписание", testEpic.getId());
+        Subtask testSubtask = new Subtask("subTestName", "subTestDesc", testEpic.getId());
         historyManager.add(testSubtask);
         historyManager.remove(testTask.getId());
         List<Task> expectedTasks = List.of(testEpic, testSubtask);
@@ -46,11 +46,11 @@ public class HistoryManagerTest {
 
     @Test
     public void remove_middleTask() {
-        Task testTask = new Task("TestTask", "Test Description");
+        Task testTask = new Task("taskTestName", "taskTestDesc");
         historyManager.add(testTask);
-        Epic testEpic = new Epic("TestEpic", "Test Description");
+        Epic testEpic = new Epic("epicTestName", "epicTestDesc");
         historyManager.add(testEpic);
-        Subtask testSubtask = new Subtask("тестСабИмя", "СабОписание", testEpic.getId());
+        Subtask testSubtask = new Subtask("subTestName", "subTestDesc", testEpic.getId());
         historyManager.add(testSubtask);
         historyManager.remove(testEpic.getId());
         List<Task> expectedTasks = List.of(testTask, testSubtask);
@@ -59,11 +59,11 @@ public class HistoryManagerTest {
 
     @Test
     public void remove_LastTask() {
-        Task testTask = new Task("TestTask", "Test Description");
+        Task testTask = new Task("taskTestName", "taskTestDesc");
         historyManager.add(testTask);
-        Epic testEpic = new Epic("TestEpic", "Test Description");
+        Epic testEpic = new Epic("epicTestName", "epicTestDesc");
         historyManager.add(testEpic);
-        Subtask testSubtask = new Subtask("тестСабИмя", "СабОписание", testEpic.getId());
+        Subtask testSubtask = new Subtask("subTestName", "subTestDesc", testEpic.getId());
         historyManager.add(testSubtask);
         historyManager.remove(testSubtask.getId());
         List<Task> expectedTasks = List.of(testTask, testEpic);

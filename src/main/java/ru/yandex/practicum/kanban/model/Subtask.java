@@ -1,5 +1,7 @@
 package ru.yandex.practicum.kanban.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -21,21 +23,30 @@ public class Subtask extends Task {
     }
 
     public static Subtask fromString(String value) {
-        //id,type,name,status,description,epic
-        //2,EPIC,Epic2,DONE,Description epic2,
-        //3,SUBTASK,Sub Task2,DONE,Description sub task3,2
-        String[] values = value.split(",");
+        String[] values = value.split(",", 8);
         int id = Integer.parseInt(values[0]);
         String name = values[2];
         Status stat = Status.valueOf(values[3]);
         String decription = values[4];
-        return new Subtask(id, name, stat, decription, Integer.parseInt(values[5]));
+        int epicId = Integer.parseInt(values[5]);
+        Subtask newSubtask = new Subtask(id, name, stat, decription, epicId);
+        if (!values[6].isEmpty()) {
+            newSubtask.setDuration(Duration.parse(values[6]));
+        }
+        if (!values[7].isEmpty()) {
+            newSubtask.setStartTime(LocalDateTime.parse(values[7]));
+        }
+        return newSubtask;
     }
 
     @Override
     public String toString() {
-        return getId() + "," + Type.SUBTASK + "," + getName() + "," + getStatus() + "," + getDescription() + ","
-                + getEpicId() + "," + getDuration() + "," + getStartTime() + "\n";
+        if (getDuration() != null & getStartTime() != null) {
+            return getId() + "," + Type.SUBTASK + "," + getName() + "," + getStatus() + "," + getDescription() + ","
+                    + getEpicId() + "," + getDuration() + "," + getStartTime() + "\n";
+        } else {
+            return getId() + "," + Type.SUBTASK + "," + getName() + "," + getStatus() + "," + getDescription() + "," + getEpicId() + ",,\n";
+        }
     }
 
     public int getEpicId() {

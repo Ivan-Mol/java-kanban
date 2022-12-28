@@ -13,22 +13,6 @@ public class Task {
     private Duration duration;
     private LocalDateTime startTime;
 
-    public Task(String name, String description) {
-        this.name = name;
-        this.description = description;
-        idCounter = idCounter + 1;
-        this.id = idCounter;
-        this.status = Status.NEW;
-    }
-
-    public Task(String name, String description, Status status) {
-        this.name = name;
-        this.description = description;
-        idCounter++;
-        this.id = idCounter;
-        this.status = status;
-    }
-
     public Task(int id, String name, Status status, String description) {
         this.id = id;
         this.name = name;
@@ -36,16 +20,34 @@ public class Task {
         this.description = description;
     }
 
+    public Task(String name, String description, Status status) {
+        this(++idCounter, name, status, description);
+    }
+
+    public Task(String name, String description) {
+        this(name, description, Status.NEW);
+    }
+
+    public Task(String name, String description, Duration duration, LocalDateTime startTime) {
+        this(name, description);
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
     public static Task fromString(String value) {
-        //id,type,name,status,description,epic
-        //2,EPIC,Epic2,DONE,Description epic2,
-        //3,SUBTASK,Sub Task2,DONE,Description sub task3,2
-        String[] values = value.split(",");
+        String[] values = value.split(",", 8);
         int id = Integer.parseInt(values[0]);
         String name = values[2];
         Status stat = Status.valueOf(values[3]);
         String decription = values[4];
-        return new Task(id, name, stat, decription);
+        Task newTask = new Task(id, name, stat, decription);
+        if (!values[6].isEmpty()) {
+            newTask.setDuration(Duration.parse(values[6]));
+        }
+        if (!values[7].isEmpty()) {
+            newTask.setStartTime(LocalDateTime.parse(values[7]));
+        }
+        return newTask;
     }
 
     public String getName() {
@@ -64,12 +66,6 @@ public class Task {
         return status;
     }
 
-    public LocalDateTime getEndTime() {
-        if (duration != null & startTime != null) {
-            return startTime.plus(duration);
-        }
-        return null;
-    }
 
     public void setStatus(Status newStatus) {
         this.status = newStatus;
@@ -77,8 +73,12 @@ public class Task {
 
     @Override
     public String toString() {
-        return getId() + "," + Type.TASK + "," + getName() + "," + getStatus() + "," + getDescription() + ","
-                + "," + getDuration() + "," + getStartTime() + "\n";
+        if (getDuration() != null & getStartTime() != null) {
+            return getId() + "," + Type.TASK + "," + getName() + "," + getStatus() + "," + getDescription() + ","
+                    + "," + getDuration().toString() + "," + getStartTime().toString() + "\n";
+        } else {
+            return getId() + "," + Type.TASK + "," + getName() + "," + getStatus() + "," + getDescription() + ",,,\n";
+        }
     }
 
     @Override
@@ -86,12 +86,14 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && name.equals(task.name) && description.equals(task.description) && status == task.status;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description)
+                && status == task.status && Objects.equals(duration, task.duration)
+                && Objects.equals(startTime, task.startTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id, status);
+        return Objects.hash(name, description, id, status, duration, startTime);
     }
 
     public Duration getDuration() {
@@ -110,4 +112,10 @@ public class Task {
         this.startTime = startTime;
     }
 
+    public LocalDateTime getEndTime() {
+        if (startTime != null && duration != null) {
+            return startTime.plusMinutes(duration.toMinutes());
+        }
+        return null;
+    }
 }

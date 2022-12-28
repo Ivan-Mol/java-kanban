@@ -14,16 +14,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
-    private final String temporaryFileName = "src/test/resources/testFile.csv";
-    private final String emptyFileName = "src/test/resources/loadFromFile_EmptyFile.csv";
-    private final String withEpicFileName = "src/test/resources/loadFromFile_FileTest.csv";
+    private final String tempFile = "src/test/resources/testFile.csv";
+    private final String emptyFile = "src/test/resources/loadFromFile_EmptyFile.csv";
+    private final String withTasksAndHistoryFile = "src/test/resources/loadFromFile_FileTest.csv";
 
     @BeforeEach
     public void init() {
-        taskManager = new FileBackedTasksManager(temporaryFileName);
+        taskManager = new FileBackedTasksManager(tempFile);
     }
 
     @Test
@@ -36,9 +38,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void shouldReturnInitializedFileBackedTaskManagerWhenFileIsCorrect() {
         FileBackedTasksManager actualManager =
-                FileBackedTasksManager.loadFromFile(new File(withEpicFileName));
+                FileBackedTasksManager.loadFromFile(new File(withTasksAndHistoryFile));
         Task testEpic = actualManager.getEpic(1);
-        Assertions.assertEquals(new Epic(1, "Магазин", Status.NEW, "Записаться в спортзал"), testEpic);
+        Assertions.assertEquals(new Epic(1, "Sport", Status.NEW, "Buy subscription"), testEpic);
         Assertions.assertTrue(actualManager.getAllSubtasks().isEmpty());
         Assertions.assertTrue(actualManager.getAllTasks().isEmpty());
         List<Task> actualHistory = actualManager.getHistory();
@@ -50,7 +52,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void shouldReturnInitializedFileBackedTaskManagerWhenFileIsEmpty() {
         FileBackedTasksManager actualManager =
-                FileBackedTasksManager.loadFromFile(new File(emptyFileName));
+                FileBackedTasksManager.loadFromFile(new File(emptyFile));
         Assertions.assertTrue(actualManager.getHistory().isEmpty());
         Assertions.assertTrue(actualManager.getAllSubtasks().isEmpty());
         Assertions.assertTrue(actualManager.getAllTasks().isEmpty());
@@ -62,8 +64,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     public void shouldSaveFileBackedTasksManagerWhenNoTasksCreated() {
         taskManager.save();
         try {
-            byte[] actualFile = Files.readAllBytes(Path.of(temporaryFileName));
-            byte[] expectedFile = Files.readAllBytes(Path.of(emptyFileName));
+            byte[] actualFile = Files.readAllBytes(Path.of(tempFile));
+            byte[] expectedFile = Files.readAllBytes(Path.of(emptyFile));
             Assertions.assertArrayEquals(expectedFile, actualFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -72,13 +74,13 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @Test
     public void shouldSaveFileBackedTasksManagerWhenOneEpicCreated() {
-        Epic testEpic = new Epic(1, "Магазин", Status.NEW, "Записаться в спортзал");
+        Epic testEpic = new Epic(1, "Sport", Status.NEW, "Buy subscription");
         taskManager.createEpic(testEpic);
         taskManager.getEpic(testEpic.getId());
         taskManager.save();
         try {
-            byte[] actualFile = Files.readAllBytes(Path.of(temporaryFileName));
-            byte[] expectedFile = Files.readAllBytes(Path.of(withEpicFileName));
+            byte[] actualFile = Files.readAllBytes(Path.of(tempFile));
+            byte[] expectedFile = Files.readAllBytes(Path.of(withTasksAndHistoryFile));
             Assertions.assertArrayEquals(expectedFile, actualFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -87,21 +89,32 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @Test
     public void shouldReturnTaskFromString() {
-        Epic testEpic = new Epic("тестЭпикИмя", "ЭпикОписание");
-        Task testTask = new Task("тестТаскИмя", "ТаскОписание");
-        Subtask testSubtask = new Subtask("тестСабИмя", "СабОписание", testEpic.getId());
-        Epic fromStringEpic = Epic.fromString(testEpic.getId() + ",EPIC,тестЭпикИмя,NEW,ЭпикОписание,");
-        Task fromStringTask = Task.fromString(testTask.getId() + ",TASK,тестТаскИмя,NEW,ТаскОписание,");
-        Subtask fromStringSubtask = Subtask.fromString(testSubtask.getId() + ",SUBTASK,тестСабИмя,NEW,СабОписание," + testEpic.getId() + ",");
+        Epic testEpic = new Epic("epicTestName", "epicTestDesc");
+        Task testTask = new Task("taskTestName", "taskTestDesc");
+        Subtask testSubtask = new Subtask("subTestName", "subTestDesc", testEpic.getId());
+        Epic fromStringEpic = Epic.fromString(testEpic.getId() + ",EPIC,epicTestName,NEW,epicTestDesc,,,");
+        Task fromStringTask = Task.fromString(testTask.getId() + ",TASK,taskTestName,NEW,taskTestDesc,,,");
+        Subtask fromStringSubtask = Subtask.fromString(testSubtask.getId() + ",SUBTASK,subTestName,NEW,subTestDesc," + testEpic.getId() + ",,");
         Assertions.assertEquals(testEpic, fromStringEpic);
         Assertions.assertEquals(testTask, fromStringTask);
         Assertions.assertEquals(testSubtask, fromStringSubtask);
     }
 
+    @Test
+    public void saveAndLoadFromFileWithTasks() {
+        Task testTask =
+                new Task("taskTestName", "taskTestDesc", Duration.ofMinutes(30), LocalDateTime.now());
+        taskManager.createTask(testTask);
+        taskManager.save();
+        FileBackedTasksManager fff = FileBackedTasksManager.loadFromFile(new File(tempFile));
+        Task task = fff.getTask(testTask.getId());
+        Assertions.assertEquals(testTask, task);
+    }
+
     @AfterEach
     public void cleanUp() {
         try {
-            Files.deleteIfExists(Path.of(temporaryFileName));
+            Files.deleteIfExists(Path.of(tempFile));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

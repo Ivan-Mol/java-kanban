@@ -1,12 +1,12 @@
 package ru.yandex.practicum.kanban.model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
     private final ArrayList<Integer> subtasksId = new ArrayList<>();
-
     private LocalDateTime endTime;
 
     public Epic(String name, String description) {
@@ -17,22 +17,20 @@ public class Epic extends Task {
         super(id, name, status, description);
     }
 
-    @Override
-    public LocalDateTime getEndTime() {
-        return endTime;
-
-    }
-
     public static Epic fromString(String value) {
-        //id,type,name,status,description,epic,duration,startTime
-        //2,EPIC,Epic2,DONE,Description
-        //3,SUBTASK,Sub Task2,DONE,Description,2
-        String[] values = value.split(",");
+        String[] values = value.split(",", 8);
         int id = Integer.parseInt(values[0]);
         String name = values[2];
         Status stat = Status.valueOf(values[3]);
         String decription = values[4];
-        return new Epic(id, name, stat, decription);
+        Epic newEpic = new Epic(id, name, stat, decription);
+        if (!values[6].isEmpty()) {
+            newEpic.setDuration(Duration.parse(values[6]));
+        }
+        if (!values[7].isEmpty()) {
+            newEpic.setStartTime(LocalDateTime.parse(values[7]));
+        }
+        return newEpic;
     }
 
     public void addSubtaskId(int subtaskId) {
@@ -41,15 +39,30 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + ","
-                + "," + getDuration() + "," + getStartTime() + "\n";
-        //id,type,name,status,description,epic
-        //1,TASK,Task1,NEW,Description task1,
-        //2,EPIC,Epic2,DONE,Description epic2
+        if (getStartTime() != null) {
+            return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + ","
+                    + "," + getDuration().toString() + "," + getStartTime().toString() + "\n";
+        } else {
+            return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + ",,,\n";
+        }
     }
 
     public ArrayList<Integer> getSubtasksId() {
         return subtasksId;
+    }
+
+    public void removeSubtaskId(int id) {
+        int index = subtasksId.indexOf(id);
+        subtasksId.remove(index);
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     @Override
@@ -58,7 +71,7 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return subtasksId.equals(epic.subtasksId);
+        return Objects.equals(subtasksId, epic.subtasksId);
     }
 
     @Override
