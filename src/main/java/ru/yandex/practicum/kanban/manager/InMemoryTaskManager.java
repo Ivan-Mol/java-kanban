@@ -28,6 +28,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     private final HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
+    public boolean isValidTask(Task task) {
+        if (task.getStartTime() == null || task.getEndTime() == null) {
+            return true;
+        }
+        return prioritizedTasks.stream().filter(currTask -> currTask.getStartTime() != null)
+                .noneMatch(currTask -> (task.getStartTime().isBefore(currTask.getEndTime())
+                        && currTask.getStartTime().isBefore(task.getEndTime())));
+    }
+
     @Override
     public List<Epic> getAllEpics() {
         //Получение списка всех задач.
@@ -89,8 +98,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void createTask(Task newTask) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newTask != null) {
-            tasks.put(newTask.getId(), newTask);
-            prioritizedTasks.add(newTask);
+            if (isValidTask(newTask)) {
+                tasks.put(newTask.getId(), newTask);
+                prioritizedTasks.add(newTask);
+            }
         }
     }
 
@@ -106,12 +117,14 @@ public class InMemoryTaskManager implements TaskManager {
     public void createSubtask(Subtask newSubtask) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newSubtask != null) {
-            Epic epicOfThisSubtask = epics.get(newSubtask.getEpicId());
-            if (epicOfThisSubtask != null) {
-                subtasks.put(newSubtask.getId(), newSubtask);
-                epicOfThisSubtask.addSubtaskId(newSubtask.getId());
-                recalcEpicData(epicOfThisSubtask.getId());
-                prioritizedTasks.add(newSubtask);
+            if (isValidTask(newSubtask)) {
+                Epic epicOfThisSubtask = epics.get(newSubtask.getEpicId());
+                if (epicOfThisSubtask != null) {
+                    subtasks.put(newSubtask.getId(), newSubtask);
+                    epicOfThisSubtask.addSubtaskId(newSubtask.getId());
+                    recalcEpicData(epicOfThisSubtask.getId());
+                    prioritizedTasks.add(newSubtask);
+                }
             }
         }
     }
@@ -119,18 +132,23 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task updatedTask) {
         if (updatedTask != null) {
+            prioritizedTasks.remove(updatedTask);
             if (epics.containsKey(updatedTask.getId())) {
                 epics.replace(updatedTask.getId(), (Epic) updatedTask);
             } else if (tasks.containsKey(updatedTask.getId())) {
-                prioritizedTasks.remove(updatedTask);
-                tasks.replace(updatedTask.getId(), updatedTask);
-                prioritizedTasks.add(updatedTask);
+                tasks.remove(updatedTask.getId());
+                if (isValidTask(updatedTask)) {
+                    tasks.put(updatedTask.getId(), updatedTask);
+                    prioritizedTasks.add(updatedTask);
+                }
             } else if (subtasks.containsKey(updatedTask.getId())) {
-                prioritizedTasks.remove(updatedTask);
                 Subtask subtask = (Subtask) updatedTask;
-                subtasks.replace(updatedTask.getId(), subtask);
+                subtasks.remove(updatedTask.getId());
+                if (isValidTask(subtask)) {
+                    subtasks.put(subtask.getId(), subtask);
+                    prioritizedTasks.add(updatedTask);
+                }
                 recalcEpicData(subtask.getEpicId());
-                prioritizedTasks.add(updatedTask);
             }
         }
     }

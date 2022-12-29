@@ -110,6 +110,14 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         Task task = fff.getTask(testTask.getId());
         Assertions.assertEquals(testTask, task);
     }
+    @Test
+    public void isValidTest(){
+        Task testTask = new Task("someName","some Desc");
+        testTask.setStartTime(LocalDateTime.now().plusHours(1));
+        testTask.setDuration(Duration.ofMinutes(2));
+        Assertions.assertTrue(taskManager.isValidTask(testTask));
+        taskManager.createTask(testTask);
+    }
 
     @AfterEach
     public void cleanUp() {

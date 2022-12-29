@@ -446,7 +446,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         subtask.setDuration(Duration.ofMinutes(20));
         taskManager.createSubtask(subtask);
         Assertions.assertEquals(List.of(subtask,task),taskManager.getPrioritizedTasks());
-        System.out.println(taskManager.getPrioritizedTasks());
     }
     @Test
     public void getPrioritizedTasksTestWithUpdatedTask(){
@@ -487,6 +486,27 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createSubtask(subtask);
         taskManager.removeSubtask(subtask.getId());
         Assertions.assertEquals(List.of(task),taskManager.getPrioritizedTasks());
+    }
+    @Test
+    public void addTwoSameTasks(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.of(2022,10,20,11,30));
+        task.setDuration(Duration.ofMinutes(10));
+        taskManager.createTask(task);
+        taskManager.createTask(task);
+        Assertions.assertIterableEquals(List.of(task),taskManager.getPrioritizedTasks());
+    }
+    @Test
+    public void addOverlappingTimeTasks(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.of(2022,10,20,11,30));
+        task.setDuration(Duration.ofHours(8));
+        taskManager.createTask(task);
+        Task task2 = new Task("taskTestName", "taskTestDesc");
+        task2.setStartTime(LocalDateTime.of(2022,10,20,14,30));
+        task2.setDuration(Duration.ofHours(12));
+        taskManager.createTask(task2);
+        Assertions.assertIterableEquals(List.of(task),taskManager.getPrioritizedTasks());
     }
 
 }
