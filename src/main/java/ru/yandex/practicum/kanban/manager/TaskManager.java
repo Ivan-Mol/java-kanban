@@ -52,6 +52,8 @@ public interface TaskManager {
 
     Duration calcEpicDuration(Epic epic);
 
+    List<Task> getPrioritizedTasks();
+
     List<Task> getHistory();
 
     HistoryManager getHistoryManager();

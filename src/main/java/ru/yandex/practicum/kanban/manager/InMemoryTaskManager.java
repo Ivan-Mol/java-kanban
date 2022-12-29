@@ -9,11 +9,22 @@ import ru.yandex.practicum.kanban.model.Task;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Task> tasks = new HashMap<>();
+
+    private final TreeSet<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
+        if (o1.getStartTime() == null) {
+            return 1;
+        }
+        if (o2.getStartTime() == null) {
+            return -1;
+        }
+        return o1.getStartTime().compareTo(o2.getStartTime());
+    });
 
     private final HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
@@ -61,6 +72,7 @@ public class InMemoryTaskManager implements TaskManager {
         //Удаление всех задач.
         for (Task task : tasks.values()) {
             removeTask(task.getId());
+            prioritizedTasks.remove(task);
         }
     }
 
@@ -69,6 +81,7 @@ public class InMemoryTaskManager implements TaskManager {
         //Удаление всех Сабтасков.
         for (Subtask subtask : subtasks.values()) {
             removeSubtask(subtask.getId());
+            prioritizedTasks.remove(subtask);
         }
     }
 
@@ -77,6 +90,7 @@ public class InMemoryTaskManager implements TaskManager {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newTask != null) {
             tasks.put(newTask.getId(), newTask);
+            prioritizedTasks.add(newTask);
         }
     }
 
@@ -97,6 +111,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasks.put(newSubtask.getId(), newSubtask);
                 epicOfThisSubtask.addSubtaskId(newSubtask.getId());
                 recalcEpicData(epicOfThisSubtask.getId());
+                prioritizedTasks.add(newSubtask);
             }
         }
     }
@@ -107,11 +122,15 @@ public class InMemoryTaskManager implements TaskManager {
             if (epics.containsKey(updatedTask.getId())) {
                 epics.replace(updatedTask.getId(), (Epic) updatedTask);
             } else if (tasks.containsKey(updatedTask.getId())) {
+                prioritizedTasks.remove(updatedTask);
                 tasks.replace(updatedTask.getId(), updatedTask);
+                prioritizedTasks.add(updatedTask);
             } else if (subtasks.containsKey(updatedTask.getId())) {
+                prioritizedTasks.remove(updatedTask);
                 Subtask subtask = (Subtask) updatedTask;
                 subtasks.replace(updatedTask.getId(), subtask);
                 recalcEpicData(subtask.getEpicId());
+                prioritizedTasks.add(updatedTask);
             }
         }
     }
@@ -166,6 +185,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTask(int id) {
         //Удаление по идентификатору.
+        prioritizedTasks.remove(tasks.get(id));
         tasks.remove(id);
         inMemoryHistoryManager.remove(id);
     }
@@ -174,6 +194,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeSubtask(int id) {
         //Удаление по идентификатору.
         if (subtasks.containsKey(id)) {
+            prioritizedTasks.remove(subtasks.get(id));
             Epic currentEpic = epics.get(subtasks.get(id).getEpicId());
             currentEpic.removeSubtaskId(id);
             recalcEpicData(currentEpic.getId());
@@ -228,6 +249,11 @@ public class InMemoryTaskManager implements TaskManager {
                 .map(sub -> sub.getDuration())
                 .filter(dur -> dur != null)
                 .reduce((duration, duration2) -> duration.plus(duration2)).orElse(null);
+    }
+
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        return prioritizedTasks.stream().collect(Collectors.toList());
     }
 
     @Override

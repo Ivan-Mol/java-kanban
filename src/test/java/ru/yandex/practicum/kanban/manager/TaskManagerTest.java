@@ -393,4 +393,100 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epicFromManager = (Epic) taskManager.getEpic(epic.getId());
         assertNull(epicFromManager.getStartTime());
     }
+    @Test
+    public void getEmptyPrioritizedTasks(){
+        Assertions.assertTrue(taskManager.getPrioritizedTasks().isEmpty());
+    }
+    @Test
+    public void getPrioritizedTasksTestWithOneTaskWithoutData(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        taskManager.createTask(task);
+        Assertions.assertIterableEquals(List.of(task),taskManager.getPrioritizedTasks());
+    }
+    @Test
+    public void getPrioritizedTasksTestWithOneTaskWithData(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.now());
+        task.setDuration(Duration.ofMinutes(2));
+        taskManager.createTask(task);
+        Assertions.assertIterableEquals(List.of(task),taskManager.getPrioritizedTasks());
+    }
+    @Test
+    public void getPrioritizedTasksTestWithTaskWithDataAndTaskWithoutData(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.now());
+        task.setDuration(Duration.ofMinutes(2));
+        taskManager.createTask(task);
+        Epic epic = new Epic("epicTestName", "epicTestDesc");
+        taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
+        taskManager.createSubtask(subtask);
+        Assertions.assertEquals(List.of(task,subtask),taskManager.getPrioritizedTasks());
+    }
+    @Test
+    public void getPrioritizedTasksTestWithTwoTasksWithoutData(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        taskManager.createTask(task);
+        Epic epic = new Epic("epicTestName", "epicTestDesc");
+        taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
+        taskManager.createSubtask(subtask);
+        Assertions.assertEquals(List.of(task,subtask),taskManager.getPrioritizedTasks());
+    }
+    @Test
+    public void getPrioritizedTasksTestWithTwoTasksWithData(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.now().plusDays(1));
+        task.setDuration(Duration.ofMinutes(30));
+        taskManager.createTask(task);
+        Epic epic = new Epic("epicTestName", "epicTestDesc");
+        taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
+        subtask.setStartTime(LocalDateTime.now());
+        subtask.setDuration(Duration.ofMinutes(20));
+        taskManager.createSubtask(subtask);
+        Assertions.assertEquals(List.of(subtask,task),taskManager.getPrioritizedTasks());
+        System.out.println(taskManager.getPrioritizedTasks());
+    }
+    @Test
+    public void getPrioritizedTasksTestWithUpdatedTask(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.now().plusDays(1));
+        task.setDuration(Duration.ofMinutes(30));
+        taskManager.createTask(task);
+        Epic epic = new Epic("epicTestName", "epicTestDesc");
+        taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
+        subtask.setStartTime(LocalDateTime.now());
+        subtask.setDuration(Duration.ofMinutes(20));
+        taskManager.createSubtask(subtask);
+        task.setStartTime(LocalDateTime.now().minusDays(1));
+        taskManager.updateTask(task);
+        Assertions.assertEquals(List.of(task,subtask),taskManager.getPrioritizedTasks());
+    }
+    @Test
+    public void RemoveOneTaskWithDataFromPrioritizedTasks(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.now());
+        task.setDuration(Duration.ofMinutes(2));
+        taskManager.createTask(task);
+        taskManager.removeTask(task.getId());
+        Assertions.assertTrue(taskManager.getPrioritizedTasks().isEmpty());
+    }
+    @Test
+    public void removeOneSubtaskWithDataFromPrioritizedTasksWithTwoTasks(){
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.now());
+        task.setDuration(Duration.ofMinutes(2));
+        taskManager.createTask(task);
+        Epic epic = new Epic("epicTestName", "epicTestDesc");
+        taskManager.createEpic(epic);
+        Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
+        subtask.setStartTime(LocalDateTime.now());
+        subtask.setDuration(Duration.ofMinutes(20));
+        taskManager.createSubtask(subtask);
+        taskManager.removeSubtask(subtask.getId());
+        Assertions.assertEquals(List.of(task),taskManager.getPrioritizedTasks());
+    }
+
 }
