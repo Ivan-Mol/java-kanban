@@ -92,7 +92,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         Epic testEpic = new Epic("epicTestName", "epicTestDesc");
         Task testTask = new Task("taskTestName", "taskTestDesc");
         Subtask testSubtask = new Subtask("subTestName", "subTestDesc", testEpic.getId());
-        Epic fromStringEpic = Epic.fromString(testEpic.getId() + ",EPIC,epicTestName,NEW,epicTestDesc,,,");
+        Epic fromStringEpic = Epic.fromString(testEpic.getId() + ",EPIC,epicTestName,NEW,epicTestDesc,,,,");
         Task fromStringTask = Task.fromString(testTask.getId() + ",TASK,taskTestName,NEW,taskTestDesc,,,");
         Subtask fromStringSubtask = Subtask.fromString(testSubtask.getId() + ",SUBTASK,subTestName,NEW,subTestDesc," + testEpic.getId() + ",,");
         Assertions.assertEquals(testEpic, fromStringEpic);

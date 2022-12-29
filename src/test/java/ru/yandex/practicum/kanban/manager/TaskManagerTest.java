@@ -265,7 +265,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void updateTask_oneEpic() {
         Epic testEpic = new Epic("epicTestName", "epicTestDesc");
         taskManager.createEpic(testEpic);
-        Epic testEpicNew = Epic.fromString(testEpic.getId() + ",TASK,epicTestName,NEW,epicTestDesc,,,");
+        Epic testEpicNew = Epic.fromString(testEpic.getId() + ",TASK,epicTestName,NEW,epicTestDesc,,,,");
         taskManager.updateTask(testEpicNew);
         Assertions.assertEquals(testEpicNew, taskManager.getEpic(testEpicNew.getId()));
     }

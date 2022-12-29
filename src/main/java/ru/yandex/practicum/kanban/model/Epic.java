@@ -18,7 +18,7 @@ public class Epic extends Task {
     }
 
     public static Epic fromString(String value) {
-        String[] values = value.split(",", 8);
+        String[] values = value.split(",", 9);
         int id = Integer.parseInt(values[0]);
         String name = values[2];
         Status stat = Status.valueOf(values[3]);
@@ -29,6 +29,9 @@ public class Epic extends Task {
         }
         if (!values[7].isEmpty()) {
             newEpic.setStartTime(LocalDateTime.parse(values[7]));
+        }
+        if (!values[8].isEmpty()) {
+            newEpic.setEndTime(LocalDateTime.parse(values[8]));
         }
         return newEpic;
     }
@@ -41,9 +44,9 @@ public class Epic extends Task {
     public String toString() {
         if (getStartTime() != null) {
             return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + ","
-                    + "," + getDuration().toString() + "," + getStartTime().toString() + "\n";
+                    + "," + getDuration().toString() + "," + getStartTime().toString() + ","+getEndTime().toString()+"\n";
         } else {
-            return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + ",,,\n";
+            return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + ",,,,\n";
         }
     }
 

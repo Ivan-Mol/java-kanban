@@ -1,4 +1,4 @@
-id,type,name,status,description,epic,duration,startTime
-1,EPIC,Sport,NEW,Buy subscription,,,
+id,type,name,status,description,epic,duration,startTime,endTime
+1,EPIC,Sport,NEW,Buy subscription,,,,
 
 1
