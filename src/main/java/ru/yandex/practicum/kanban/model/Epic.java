@@ -44,7 +44,7 @@ public class Epic extends Task {
     public String toString() {
         if (getStartTime() != null) {
             return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + ","
-                    + "," + getDuration().toString() + "," + getStartTime().toString() + ","+getEndTime().toString()+"\n";
+                    + "," + getDuration().toString() + "," + getStartTime().toString() + "," + getEndTime().toString() + "\n";
         } else {
             return getId() + "," + Type.EPIC + "," + getName() + "," + getStatus() + "," + getDescription() + ",,,,\n";
         }
@@ -55,8 +55,7 @@ public class Epic extends Task {
     }
 
     public void removeSubtaskId(int id) {
-        int index = subtasksId.indexOf(id);
-        subtasksId.remove(index);
+        subtasksId.remove((Integer) id);
     }
 
     @Override

@@ -8,7 +8,7 @@ public class Task {
     private static int idCounter = 0;
     private final String name;
     private final String description;
-    private final int id;
+    private int id;
     private Status status;
     private Duration duration;
     private LocalDateTime startTime;
@@ -117,5 +117,10 @@ public class Task {
             return startTime.plusMinutes(duration.toMinutes());
         }
         return null;
+    }
+
+    public void setId() {
+        idCounter++;
+        this.id = idCounter;
     }
 }

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.kanban.manager;
 
 
+import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.model.Epic;
 import ru.yandex.practicum.kanban.model.Status;
 import ru.yandex.practicum.kanban.model.Subtask;
@@ -41,7 +42,6 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Epic> getAllEpics() {
         //Получение списка всех задач.
         return new ArrayList<>(epics.values());
-
     }
 
     @Override
@@ -69,7 +69,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeAllTasks() {
+    public void removeAllTasks() throws TaskNotFoundException {
         //Удаление всех задач.
         for (Task task : tasks.values()) {
             removeTask(task.getId());
@@ -90,6 +90,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void createTask(Task newTask) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newTask != null) {
+            setIdIfNull(newTask);
             if (isValidTask(newTask)) {
                 tasks.put(newTask.getId(), newTask);
                 prioritizedTasks.add(newTask);
@@ -101,6 +102,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void createEpic(Epic newEpic) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newEpic != null) {
+            setIdIfNull(newEpic);
             epics.put(newEpic.getId(), newEpic);
         }
     }
@@ -109,6 +111,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void createSubtask(Subtask newSubtask) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newSubtask != null) {
+            setIdIfNull(newSubtask);
             if (isValidTask(newSubtask)) {
                 Epic epicOfThisSubtask = epics.get(newSubtask.getEpicId());
                 if (epicOfThisSubtask != null) {
@@ -164,10 +167,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getTask(int id) {
+    public Task getTask(int id) throws TaskNotFoundException {
         //Получение по идентификатору.
         if (tasks.get(id) != null) {
             inMemoryHistoryManager.add(tasks.get(id));
+        }else {
+            throw new TaskNotFoundException(id);
         }
         return tasks.get(id);
     }
@@ -187,7 +192,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.containsKey(id)) {
             Epic epic = epics.get(id);
             ArrayList<Integer> subtasksId = epic.getSubtasksId();
-            prioritizedTasks.removeIf(task-> subtasksId.contains(task.getId()));
+            prioritizedTasks.removeIf(task -> subtasksId.contains(task.getId()));
             subtasksId.forEach(inMemoryHistoryManager::remove);
             subtasksId.forEach(subtasks::remove);
             inMemoryHistoryManager.remove(id);
@@ -196,8 +201,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeTask(int id) {
+    public void removeTask(int id) throws TaskNotFoundException {
         //Удаление по идентификатору.
+        if (!tasks.containsKey(id)){
+            throw new TaskNotFoundException(id);
+        }
         prioritizedTasks.remove(tasks.get(id));
         tasks.remove(id);
         inMemoryHistoryManager.remove(id);
@@ -265,6 +273,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public Map<Integer, Subtask> getEpicSubtasks(int id) {
+        Map<Integer, Subtask> thisEpicSubtasks = new HashMap<>();
+        if (id != 0 & epics.containsKey(id)) {
+            Epic epic = (Epic) getEpic(id);
+            for (Map.Entry<Integer, Subtask> subtask : subtasks.entrySet()) {
+                if (subtask.getValue().getEpicId() == epic.getId()) {
+                    thisEpicSubtasks.put(subtask.getKey(), subtask.getValue());
+                }
+            }
+            return thisEpicSubtasks;
+        }
+        return null;
+    }
+
+    @Override
     public List<Task> getPrioritizedTasks() {
         return prioritizedTasks.stream().collect(Collectors.toList());
     }
@@ -272,5 +295,12 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return inMemoryHistoryManager.getHistory();
+    }
+
+    @Override
+    public void setIdIfNull(Task task) {
+        if (task.getId() == 0) {
+            task.setId();
+        }
     }
 }

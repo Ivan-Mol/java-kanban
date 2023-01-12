@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.kanban.exceptions.ManagerSaveException;
+import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.model.Epic;
 import ru.yandex.practicum.kanban.model.Status;
 import ru.yandex.practicum.kanban.model.Subtask;
@@ -101,7 +102,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     }
 
     @Test
-    public void saveAndLoadFromFileWithTasks() {
+    public void saveAndLoadFromFileWithTasks() throws TaskNotFoundException {
         Task testTask =
                 new Task("taskTestName", "taskTestDesc", Duration.ofMinutes(30), LocalDateTime.now());
         taskManager.createTask(testTask);

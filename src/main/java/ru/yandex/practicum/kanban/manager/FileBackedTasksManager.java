@@ -1,6 +1,7 @@
 package ru.yandex.practicum.kanban.manager;
 
 import ru.yandex.practicum.kanban.exceptions.ManagerSaveException;
+import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.model.*;
 
 import java.io.*;
@@ -115,7 +116,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void removeAllTasks() {
+    public void removeAllTasks() throws TaskNotFoundException {
         super.removeAllTasks();
         save();
     }
@@ -156,7 +157,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task getTask(int id) {
+    public Task getTask(int id) throws TaskNotFoundException {
         return super.getTask(id);
     }
 
@@ -172,7 +173,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void removeTask(int id) {
+    public void removeTask(int id) throws TaskNotFoundException {
         super.removeTask(id);
         save();
     }

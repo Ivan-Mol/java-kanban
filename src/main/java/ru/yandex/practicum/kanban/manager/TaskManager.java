@@ -1,6 +1,7 @@
 package ru.yandex.practicum.kanban.manager;
 
 
+import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.model.Epic;
 import ru.yandex.practicum.kanban.model.Status;
 import ru.yandex.practicum.kanban.model.Subtask;
@@ -9,6 +10,7 @@ import ru.yandex.practicum.kanban.model.Task;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface TaskManager {
 
@@ -18,7 +20,7 @@ public interface TaskManager {
 
     List<Subtask> getAllSubtasks();
 
-    void removeAllTasks();
+    void removeAllTasks() throws TaskNotFoundException;
 
     void removeAllEpics();
 
@@ -34,13 +36,13 @@ public interface TaskManager {
 
     Task getEpic(int id);
 
-    Task getTask(int id);
+    Task getTask(int id) throws TaskNotFoundException;
 
     Task getSubtask(int id);
 
     void removeEpic(int id);
 
-    void removeTask(int id);
+    void removeTask(int id) throws TaskNotFoundException;
 
     void removeSubtask(int id);
 
@@ -52,9 +54,13 @@ public interface TaskManager {
 
     Duration calcEpicDuration(Epic epic);
 
+    Map<Integer, Subtask> getEpicSubtasks(int id);
+
     List<Task> getPrioritizedTasks();
 
     List<Task> getHistory();
 
     HistoryManager getHistoryManager();
+
+    void setIdIfNull(Task task);
 }
