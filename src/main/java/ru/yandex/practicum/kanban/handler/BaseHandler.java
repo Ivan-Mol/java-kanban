@@ -3,6 +3,7 @@ package ru.yandex.practicum.kanban.handler;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import ru.yandex.practicum.kanban.exceptions.IncorrectTaskException;
 import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 
 import java.io.IOException;
@@ -24,10 +25,12 @@ public abstract class BaseHandler implements HttpHandler {
             writeResponse(httpExchange, "Unexpected Error", 500);
         } catch (TaskNotFoundException e) {
             writeResponse(httpExchange,e.getMessage(),404);
+        }catch (IncorrectTaskException e) {
+            writeResponse(httpExchange,e.getMessage(),400);
         }
     }
 
-    protected abstract Object handleInner(HttpExchange exchange) throws IOException, TaskNotFoundException;
+    protected abstract Object handleInner(HttpExchange exchange) throws IOException, TaskNotFoundException, IncorrectTaskException;
 
     private void writeResponse(HttpExchange exchange,
                                Object responseObj,

@@ -1,7 +1,11 @@
 package ru.yandex.practicum.kanban.handler;
 
+import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
+import ru.yandex.practicum.kanban.exceptions.IncorrectTaskException;
+import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.manager.TaskManager;
+import ru.yandex.practicum.kanban.model.Epic;
 import ru.yandex.practicum.kanban.model.Subtask;
 
 import java.io.IOException;
@@ -15,7 +19,7 @@ public class SubtaskHandler extends BaseHandler {
     }
 
     @Override
-    protected Object handleInner(HttpExchange httpExchange) throws IOException {
+    protected Object handleInner(HttpExchange httpExchange) throws IOException, TaskNotFoundException, IncorrectTaskException {
         String requestMethod = httpExchange.getRequestMethod(); //метод запроса GET POST DELETE
         String path = httpExchange.getRequestURI().getPath(); //путь запроса от /tasks/
         String query = httpExchange.getRequestURI().getQuery(); //param1=val1&param2=val2...
@@ -45,11 +49,21 @@ public class SubtaskHandler extends BaseHandler {
         throw new UnexpectedException("Method " + requestMethod + " is not supported");
     }
 
-    private String postSubtaskToManager(HttpExchange httpExchange) throws IOException {
+    private String postSubtaskToManager(HttpExchange httpExchange) throws IOException, IncorrectTaskException {
         Subtask subtaskFromJson = null;
         String reqBody = new String(httpExchange.getRequestBody().readAllBytes());
-        subtaskFromJson = gson.fromJson(reqBody, Subtask.class);
-        manager.createSubtask(subtaskFromJson);
-        return "Subtask Added";
+        try {
+            subtaskFromJson = gson.fromJson(reqBody, Subtask.class);
+        } catch (JsonSyntaxException e) {
+            throw new IncorrectTaskException("Incorrect body of Epic");
+        }
+        try {
+            manager.getSubtask(subtaskFromJson.getId());
+            manager.updateTask(subtaskFromJson);
+            return "Subtask updated";
+        }catch (TaskNotFoundException e){
+            manager.createSubtask(subtaskFromJson);
+            return "Epic Added";
+        }
     }
 }

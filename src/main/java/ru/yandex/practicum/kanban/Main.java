@@ -1,5 +1,6 @@
 package ru.yandex.practicum.kanban;
 
+import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.manager.FileBackedTasksManager;
 import ru.yandex.practicum.kanban.manager.TaskManager;
 import ru.yandex.practicum.kanban.model.Epic;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 public class Main {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, TaskNotFoundException {
         TaskManager taskManager = new FileBackedTasksManager("src/test/resources/loadFromFile_EmptyFile.csv");
         Task task = new Task("taskTest", "DescrTask");
         task.setStartTime(LocalDateTime.now().plusHours(1));
@@ -34,5 +35,7 @@ public class Main {
         HttpTaskServer testServer =
                 new HttpTaskServer(taskManager);
 
+
+        new KVServer().start();
     }
 }

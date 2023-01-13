@@ -198,14 +198,13 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void removeEpic_emptyList() {
         int id = 100500;
         taskManager.removeEpic(id);
-        Assertions.assertNull(taskManager.getEpic(id));
-
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskManager.getEpic(id));
     }
 
     @Test
-    public void removeTask_emptyList() throws TaskNotFoundException {
+    public void removeTask_emptyList() {
         int id = 100500;
-        Assertions.assertThrows(TaskNotFoundException.class,()->taskManager.removeTask(id));
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskManager.removeTask(id));
 
     }
 
@@ -213,8 +212,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void removeSubtask_emptyList() {
         int id = 100500;
         taskManager.removeSubtask(id);
-        Assertions.assertNull(taskManager.getSubtask(id));
-
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskManager.getSubtask(id));
     }
 
     @Test
@@ -224,8 +222,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Subtask testSubtask = new Subtask("subTestDesc", "subTestDesc", testEpic.getId());
         taskManager.createSubtask(testSubtask);
         taskManager.removeEpic(testEpic.getId());
-        Assertions.assertNull(taskManager.getEpic(testEpic.getId()));
-        Assertions.assertNull(taskManager.getSubtask(testSubtask.getId()));
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskManager.getEpic(testEpic.getId()));
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskManager.getSubtask(testSubtask.getId()));
 
     }
 
@@ -234,7 +232,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task testTask = new Task("taskTestName", "taskTestDesc");
         taskManager.createTask(testTask);
         taskManager.removeTask(testTask.getId());
-        Assertions.assertThrows(TaskNotFoundException.class,()->taskManager.getTask(testTask.getId()));
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskManager.getTask(testTask.getId()));
 
     }
 
@@ -245,7 +243,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Subtask testSubtask = new Subtask("subTestDesc", "subTestDesc", testEpic.getId());
         taskManager.createSubtask(testSubtask);
         taskManager.removeSubtask(testSubtask.getId());
-        Assertions.assertNull(taskManager.getSubtask(testSubtask.getId()));
+        Assertions.assertThrows(TaskNotFoundException.class, () -> taskManager.getSubtask(testSubtask.getId()));
     }
 
     @Test
@@ -264,7 +262,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void updateTask_oneEpic() {
+    public void updateTask_oneEpic() throws TaskNotFoundException {
         Epic testEpic = new Epic("epicTestName", "epicTestDesc");
         taskManager.createEpic(testEpic);
         Epic testEpicNew = Epic.fromString(testEpic.getId() + ",TASK,epicTestName,NEW,epicTestDesc,,,,");
@@ -273,7 +271,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void updateTask_oneSubtask() {
+    public void updateTask_oneSubtask() throws TaskNotFoundException {
         Epic testEpic = new Epic("epicTestName", "epicTestDesc");
         taskManager.createEpic(testEpic);
         Subtask testSubtask = new Subtask("subTestName", "subTestDesc", testEpic.getId());
@@ -342,7 +340,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void calcEpicDataAddSubtasksData() {
+    public void calcEpicDataAddSubtasksData() throws TaskNotFoundException {
         Epic epic = new Epic("epicTestName", "epicTestDesc");
         taskManager.createEpic(epic);
         Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
@@ -360,7 +358,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void calcEpicDataUpdateSubtasksData() {
+    public void calcEpicDataUpdateSubtasksData() throws TaskNotFoundException {
         Epic epic = new Epic("epicTestName", "epicTestDesc");
         taskManager.createEpic(epic);
         Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
@@ -380,8 +378,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(subtask.getEndTime(), epicFromManager.getEndTime());
         assertEquals(subtask.getStatus(), epicFromManager.getStatus());
     }
+
     @Test
-    public void calcEpicDataRemoveSubtaskWithData() {
+    public void calcEpicDataRemoveSubtaskWithData() throws TaskNotFoundException {
         Epic epic = new Epic("epicTestName", "epicTestDesc");
         taskManager.createEpic(epic);
         Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
@@ -395,26 +394,30 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epicFromManager = (Epic) taskManager.getEpic(epic.getId());
         assertNull(epicFromManager.getStartTime());
     }
+
     @Test
-    public void getEmptyPrioritizedTasks(){
+    public void getEmptyPrioritizedTasks() {
         Assertions.assertTrue(taskManager.getPrioritizedTasks().isEmpty());
     }
+
     @Test
-    public void getPrioritizedTasksTestWithOneTaskWithoutData(){
+    public void getPrioritizedTasksTestWithOneTaskWithoutData() {
         Task task = new Task("taskTestName", "taskTestDesc");
         taskManager.createTask(task);
-        Assertions.assertIterableEquals(List.of(task),taskManager.getPrioritizedTasks());
+        Assertions.assertIterableEquals(List.of(task), taskManager.getPrioritizedTasks());
     }
+
     @Test
-    public void getPrioritizedTasksTestWithOneTaskWithData(){
+    public void getPrioritizedTasksTestWithOneTaskWithData() {
         Task task = new Task("taskTestName", "taskTestDesc");
         task.setStartTime(LocalDateTime.now());
         task.setDuration(Duration.ofMinutes(2));
         taskManager.createTask(task);
-        Assertions.assertIterableEquals(List.of(task),taskManager.getPrioritizedTasks());
+        Assertions.assertIterableEquals(List.of(task), taskManager.getPrioritizedTasks());
     }
+
     @Test
-    public void getPrioritizedTasksTestWithTaskWithDataAndTaskWithoutData(){
+    public void getPrioritizedTasksTestWithTaskWithDataAndTaskWithoutData() {
         Task task = new Task("taskTestName", "taskTestDesc");
         task.setStartTime(LocalDateTime.now());
         task.setDuration(Duration.ofMinutes(2));
@@ -423,20 +426,22 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(epic);
         Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
         taskManager.createSubtask(subtask);
-        Assertions.assertEquals(List.of(task,subtask),taskManager.getPrioritizedTasks());
+        Assertions.assertEquals(List.of(task, subtask), taskManager.getPrioritizedTasks());
     }
+
     @Test
-    public void getPrioritizedTasksTestWithTwoTasksWithoutData(){
+    public void getPrioritizedTasksTestWithTwoTasksWithoutData() {
         Task task = new Task("taskTestName", "taskTestDesc");
         taskManager.createTask(task);
         Epic epic = new Epic("epicTestName", "epicTestDesc");
         taskManager.createEpic(epic);
         Subtask subtask = new Subtask("subTestName", "subTestDesc", epic.getId());
         taskManager.createSubtask(subtask);
-        Assertions.assertEquals(List.of(task,subtask),taskManager.getPrioritizedTasks());
+        Assertions.assertEquals(List.of(task, subtask), taskManager.getPrioritizedTasks());
     }
+
     @Test
-    public void getPrioritizedTasksTestWithTwoTasksWithData(){
+    public void getPrioritizedTasksTestWithTwoTasksWithData() {
         Task task = new Task("taskTestName", "taskTestDesc");
         task.setStartTime(LocalDateTime.now().plusDays(1));
         task.setDuration(Duration.ofMinutes(30));
@@ -447,10 +452,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         subtask.setStartTime(LocalDateTime.now());
         subtask.setDuration(Duration.ofMinutes(20));
         taskManager.createSubtask(subtask);
-        Assertions.assertEquals(List.of(subtask,task),taskManager.getPrioritizedTasks());
+        Assertions.assertEquals(List.of(subtask, task), taskManager.getPrioritizedTasks());
     }
+
     @Test
-    public void getPrioritizedTasksTestWithUpdatedTask(){
+    public void getPrioritizedTasksTestWithUpdatedTask() {
         Task task = new Task("taskTestName", "taskTestDesc");
         task.setStartTime(LocalDateTime.now().plusDays(1));
         task.setDuration(Duration.ofMinutes(30));
@@ -463,8 +469,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createSubtask(subtask);
         task.setStartTime(LocalDateTime.now().minusDays(1));
         taskManager.updateTask(task);
-        Assertions.assertEquals(List.of(task,subtask),taskManager.getPrioritizedTasks());
+        Assertions.assertEquals(List.of(task, subtask), taskManager.getPrioritizedTasks());
     }
+
     @Test
     public void RemoveOneTaskWithDataFromPrioritizedTasks() throws TaskNotFoundException {
         Task task = new Task("taskTestName", "taskTestDesc");
@@ -474,8 +481,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.removeTask(task.getId());
         Assertions.assertTrue(taskManager.getPrioritizedTasks().isEmpty());
     }
+
     @Test
-    public void removeOneSubtaskWithDataFromPrioritizedTasksWithTwoTasks(){
+    public void removeOneSubtaskWithDataFromPrioritizedTasksWithTwoTasks() {
         Task task = new Task("taskTestName", "taskTestDesc");
         task.setStartTime(LocalDateTime.now());
         task.setDuration(Duration.ofMinutes(2));
@@ -487,43 +495,45 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         subtask.setDuration(Duration.ofMinutes(20));
         taskManager.createSubtask(subtask);
         taskManager.removeSubtask(subtask.getId());
-        Assertions.assertEquals(List.of(task),taskManager.getPrioritizedTasks());
-    }
-    @Test
-    public void addTwoSameTasks(){
-        Task task = new Task("taskTestName", "taskTestDesc");
-        task.setStartTime(LocalDateTime.of(2022,10,20,11,30));
-        task.setDuration(Duration.ofMinutes(10));
-        taskManager.createTask(task);
-        taskManager.createTask(task);
-        Assertions.assertIterableEquals(List.of(task),taskManager.getPrioritizedTasks());
-    }
-    @Test
-    public void addOverlappingTimeTasks(){
-        Task task = new Task("taskTestName", "taskTestDesc");
-        task.setStartTime(LocalDateTime.of(2022,10,20,11,30));
-        task.setDuration(Duration.ofHours(8));
-        taskManager.createTask(task);
-        Task task2 = new Task("taskTestName", "taskTestDesc");
-        task2.setStartTime(LocalDateTime.of(2022,10,20,14,30));
-        task2.setDuration(Duration.ofHours(12));
-        taskManager.createTask(task2);
-        Assertions.assertIterableEquals(List.of(task),taskManager.getPrioritizedTasks());
+        Assertions.assertEquals(List.of(task), taskManager.getPrioritizedTasks());
     }
 
     @Test
-    public void getEpicSubtasks_Test() {
+    public void addTwoSameTasks() {
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.of(2022, 10, 20, 11, 30));
+        task.setDuration(Duration.ofMinutes(10));
+        taskManager.createTask(task);
+        taskManager.createTask(task);
+        Assertions.assertIterableEquals(List.of(task), taskManager.getPrioritizedTasks());
+    }
+
+    @Test
+    public void addOverlappingTimeTasks() {
+        Task task = new Task("taskTestName", "taskTestDesc");
+        task.setStartTime(LocalDateTime.of(2022, 10, 20, 11, 30));
+        task.setDuration(Duration.ofHours(8));
+        taskManager.createTask(task);
+        Task task2 = new Task("taskTestName", "taskTestDesc");
+        task2.setStartTime(LocalDateTime.of(2022, 10, 20, 14, 30));
+        task2.setDuration(Duration.ofHours(12));
+        taskManager.createTask(task2);
+        Assertions.assertIterableEquals(List.of(task), taskManager.getPrioritizedTasks());
+    }
+
+    @Test
+    public void getEpicSubtasks_Test() throws TaskNotFoundException {
         Epic testEpic = new Epic("epicTestName", "epicTestDesc");
         taskManager.createEpic(testEpic);
         Epic testEpic2 = new Epic("epicTestName2", "epicTestDesc2");
         taskManager.createEpic(testEpic2);
         Subtask testSubtask = new Subtask("subTestDesc", "subTestDesc", testEpic.getId());
         taskManager.createSubtask(testSubtask);
-        Subtask testSubtask2 = new Subtask("subTestDesc", "subTestDesc",testEpic2.getId());
+        Subtask testSubtask2 = new Subtask("subTestDesc", "subTestDesc", testEpic2.getId());
         taskManager.createSubtask(testSubtask2);
-        Map<Integer,Subtask> expectedMap = new HashMap<>();
-        expectedMap.put(testSubtask.getId(),testSubtask);
-        Assertions.assertEquals(expectedMap,taskManager.getEpicSubtasks(testEpic.getId()));
+        Map<Integer, Subtask> expectedMap = new HashMap<>();
+        expectedMap.put(testSubtask.getId(), testSubtask);
+        Assertions.assertEquals(expectedMap, taskManager.getEpicSubtasks(testEpic.getId()));
         Assertions.assertNull(taskManager.getEpicSubtasks(0));
         Assertions.assertNull(taskManager.getEpicSubtasks(333));
     }

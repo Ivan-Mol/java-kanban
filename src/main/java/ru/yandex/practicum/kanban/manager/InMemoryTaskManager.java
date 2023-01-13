@@ -158,10 +158,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getEpic(int id) {
+    public Task getEpic(int id) throws TaskNotFoundException {
         //Получение по идентификатору.
         if (epics.get(id) != null) {
             inMemoryHistoryManager.add(epics.get(id));
+        }else {
+            throw new TaskNotFoundException(id);
         }
         return epics.get(id);
     }
@@ -178,10 +180,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getSubtask(int id) {
+    public Task getSubtask(int id) throws TaskNotFoundException {
         //Получение по идентификатору.
         if (subtasks.get(id) != null) {
             inMemoryHistoryManager.add(subtasks.get(id));
+        }else {
+            throw new TaskNotFoundException(id);
         }
         return subtasks.get(id);
     }
@@ -273,7 +277,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Map<Integer, Subtask> getEpicSubtasks(int id) {
+    public Map<Integer, Subtask> getEpicSubtasks(int id) throws TaskNotFoundException {
         Map<Integer, Subtask> thisEpicSubtasks = new HashMap<>();
         if (id != 0 & epics.containsKey(id)) {
             Epic epic = (Epic) getEpic(id);

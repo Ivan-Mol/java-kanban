@@ -34,11 +34,11 @@ public interface TaskManager {
 
     void updateTask(Task updatedTask);
 
-    Task getEpic(int id);
+    Task getEpic(int id) throws TaskNotFoundException;
 
     Task getTask(int id) throws TaskNotFoundException;
 
-    Task getSubtask(int id);
+    Task getSubtask(int id) throws TaskNotFoundException;
 
     void removeEpic(int id);
 
@@ -54,7 +54,7 @@ public interface TaskManager {
 
     Duration calcEpicDuration(Epic epic);
 
-    Map<Integer, Subtask> getEpicSubtasks(int id);
+    Map<Integer, Subtask> getEpicSubtasks(int id) throws TaskNotFoundException;
 
     List<Task> getPrioritizedTasks();
 

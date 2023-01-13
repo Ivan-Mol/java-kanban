@@ -1,8 +1,12 @@
 package ru.yandex.practicum.kanban.handler;
 
+import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
+import ru.yandex.practicum.kanban.exceptions.IncorrectTaskException;
+import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.manager.TaskManager;
 import ru.yandex.practicum.kanban.model.Epic;
+import ru.yandex.practicum.kanban.model.Task;
 
 import java.io.IOException;
 import java.rmi.UnexpectedException;
@@ -16,7 +20,7 @@ public class EpicHandler extends BaseHandler {
     }
 
     @Override
-    protected Object handleInner(HttpExchange httpExchange) throws IOException {
+    protected Object handleInner(HttpExchange httpExchange) throws IOException, TaskNotFoundException, IncorrectTaskException {
         String requestMethod = httpExchange.getRequestMethod(); //метод запроса GET POST DELETE
         String query = httpExchange.getRequestURI().getQuery(); //param1=val1&param2=val2...
 
@@ -42,10 +46,21 @@ public class EpicHandler extends BaseHandler {
         throw new UnexpectedException("Method " + requestMethod + " is not supported");
     }
 
-    private String postEpicToManager(HttpExchange httpExchange) throws IOException {
+    private String postEpicToManager(HttpExchange httpExchange) throws IOException, IncorrectTaskException, TaskNotFoundException {
+        Epic epicFromJson = null;
         String reqBody = new String(httpExchange.getRequestBody().readAllBytes());
-        Epic epicFromJson = gson.fromJson(reqBody, Epic.class);
-        manager.createEpic(epicFromJson);
-        return "Epic Added";
+        try {
+            epicFromJson = gson.fromJson(reqBody, Epic.class);
+        } catch (JsonSyntaxException e) {
+            throw new IncorrectTaskException("Incorrect body of Epic");
+        }
+        try {
+            manager.getEpic(epicFromJson.getId());
+            manager.updateTask(epicFromJson);
+            return "Epic updated";
+        }catch (TaskNotFoundException e){
+            manager.createEpic(epicFromJson);
+            return "Epic Added";
+        }
     }
 }

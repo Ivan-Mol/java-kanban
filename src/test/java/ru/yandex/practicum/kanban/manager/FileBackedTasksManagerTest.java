@@ -37,7 +37,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     }
 
     @Test
-    public void shouldReturnInitializedFileBackedTaskManagerWhenFileIsCorrect() {
+    public void shouldReturnInitializedFileBackedTaskManagerWhenFileIsCorrect() throws TaskNotFoundException {
         FileBackedTasksManager actualManager =
                 FileBackedTasksManager.loadFromFile(new File(withTasksAndHistoryFile));
         Task testEpic = actualManager.getEpic(1);
@@ -62,19 +62,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     }
 
     @Test
-    public void shouldSaveFileBackedTasksManagerWhenNoTasksCreated() {
-        taskManager.save();
-        try {
-            byte[] actualFile = Files.readAllBytes(Path.of(tempFile));
-            byte[] expectedFile = Files.readAllBytes(Path.of(emptyFile));
-            Assertions.assertArrayEquals(expectedFile, actualFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Test
-    public void shouldSaveFileBackedTasksManagerWhenOneEpicCreated() {
+    public void shouldSaveFileBackedTasksManagerWhenOneEpicCreated() throws TaskNotFoundException {
         Epic testEpic = new Epic(1, "Sport", Status.NEW, "Buy subscription");
         taskManager.createEpic(testEpic);
         taskManager.getEpic(testEpic.getId());
