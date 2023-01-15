@@ -5,7 +5,6 @@ import com.sun.net.httpserver.HttpExchange;
 import ru.yandex.practicum.kanban.exceptions.IncorrectTaskException;
 import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.manager.TaskManager;
-import ru.yandex.practicum.kanban.model.Epic;
 import ru.yandex.practicum.kanban.model.Subtask;
 
 import java.io.IOException;
@@ -61,7 +60,7 @@ public class SubtaskHandler extends BaseHandler {
             manager.getSubtask(subtaskFromJson.getId());
             manager.updateTask(subtaskFromJson);
             return "Subtask updated";
-        }catch (TaskNotFoundException e){
+        } catch (TaskNotFoundException e) {
             manager.createSubtask(subtaskFromJson);
             return "Epic Added";
         }

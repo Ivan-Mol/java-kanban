@@ -5,7 +5,6 @@ import com.sun.net.httpserver.HttpExchange;
 import ru.yandex.practicum.kanban.exceptions.IncorrectTaskException;
 import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.manager.TaskManager;
-import ru.yandex.practicum.kanban.model.Epic;
 import ru.yandex.practicum.kanban.model.Task;
 
 import java.io.IOException;
@@ -57,7 +56,7 @@ public class TaskHandler extends BaseHandler {
             manager.getTask(taskFromJson.getId());
             manager.updateTask(taskFromJson);
             return "Task updated";
-        }catch (TaskNotFoundException e){
+        } catch (TaskNotFoundException e) {
             manager.createTask(taskFromJson);
             return "Task Added";
         }

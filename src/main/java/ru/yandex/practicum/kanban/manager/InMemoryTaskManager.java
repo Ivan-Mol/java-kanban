@@ -13,11 +13,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final Map<Integer, Subtask> subtasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Subtask> subtasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, Task> tasks = new HashMap<>();
 
-    private final TreeSet<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
+    protected final TreeSet<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
         if (o1.getStartTime() == null) {
             return 1;
         }
@@ -162,7 +162,7 @@ public class InMemoryTaskManager implements TaskManager {
         //Получение по идентификатору.
         if (epics.get(id) != null) {
             inMemoryHistoryManager.add(epics.get(id));
-        }else {
+        } else {
             throw new TaskNotFoundException(id);
         }
         return epics.get(id);
@@ -173,7 +173,7 @@ public class InMemoryTaskManager implements TaskManager {
         //Получение по идентификатору.
         if (tasks.get(id) != null) {
             inMemoryHistoryManager.add(tasks.get(id));
-        }else {
+        } else {
             throw new TaskNotFoundException(id);
         }
         return tasks.get(id);
@@ -184,7 +184,7 @@ public class InMemoryTaskManager implements TaskManager {
         //Получение по идентификатору.
         if (subtasks.get(id) != null) {
             inMemoryHistoryManager.add(subtasks.get(id));
-        }else {
+        } else {
             throw new TaskNotFoundException(id);
         }
         return subtasks.get(id);
@@ -207,7 +207,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTask(int id) throws TaskNotFoundException {
         //Удаление по идентификатору.
-        if (!tasks.containsKey(id)){
+        if (!tasks.containsKey(id)) {
             throw new TaskNotFoundException(id);
         }
         prioritizedTasks.remove(tasks.get(id));

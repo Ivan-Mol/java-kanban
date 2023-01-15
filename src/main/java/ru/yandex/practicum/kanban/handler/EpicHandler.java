@@ -6,7 +6,6 @@ import ru.yandex.practicum.kanban.exceptions.IncorrectTaskException;
 import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
 import ru.yandex.practicum.kanban.manager.TaskManager;
 import ru.yandex.practicum.kanban.model.Epic;
-import ru.yandex.practicum.kanban.model.Task;
 
 import java.io.IOException;
 import java.rmi.UnexpectedException;
@@ -58,7 +57,7 @@ public class EpicHandler extends BaseHandler {
             manager.getEpic(epicFromJson.getId());
             manager.updateTask(epicFromJson);
             return "Epic updated";
-        }catch (TaskNotFoundException e){
+        } catch (TaskNotFoundException e) {
             manager.createEpic(epicFromJson);
             return "Epic Added";
         }

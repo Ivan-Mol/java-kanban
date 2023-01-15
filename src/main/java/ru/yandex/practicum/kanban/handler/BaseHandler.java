@@ -24,9 +24,9 @@ public abstract class BaseHandler implements HttpHandler {
             e.printStackTrace();
             writeResponse(httpExchange, "Unexpected Error", 500);
         } catch (TaskNotFoundException e) {
-            writeResponse(httpExchange,e.getMessage(),404);
-        }catch (IncorrectTaskException e) {
-            writeResponse(httpExchange,e.getMessage(),400);
+            writeResponse(httpExchange, e.getMessage(), 404);
+        } catch (IncorrectTaskException e) {
+            writeResponse(httpExchange, e.getMessage(), 400);
         }
     }
 

@@ -1,19 +1,19 @@
 package ru.yandex.practicum.kanban.manager;
 
 import ru.yandex.practicum.kanban.exceptions.ManagerSaveException;
-import ru.yandex.practicum.kanban.exceptions.TaskNotFoundException;
-import ru.yandex.practicum.kanban.model.*;
+import ru.yandex.practicum.kanban.model.Epic;
+import ru.yandex.practicum.kanban.model.Subtask;
+import ru.yandex.practicum.kanban.model.Task;
+import ru.yandex.practicum.kanban.model.Type;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class FileBackedTasksManager extends InMemoryTaskManager {
-    String fileName;
+public class FileBackedTasksManager extends SavingTaskManager {
+    private final String fileName;
 
     public FileBackedTasksManager(String fileName) {
         this.fileName = fileName;
@@ -94,118 +94,4 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return String.join(",", idList);
     }
 
-    @Override
-    public List<Epic> getAllEpics() {
-        return super.getAllEpics();
-    }
-
-    @Override
-    public List<Task> getAllTasks() {
-        return super.getAllTasks();
-    }
-
-    @Override
-    public List<Subtask> getAllSubtasks() {
-        return super.getAllSubtasks();
-    }
-
-    @Override
-    public void removeAllEpics() {
-        super.removeAllEpics();
-        save();
-    }
-
-    @Override
-    public void removeAllTasks() throws TaskNotFoundException {
-        super.removeAllTasks();
-        save();
-    }
-
-    @Override
-    public void removeAllSubtasks() {
-        super.removeAllSubtasks();
-        save();
-    }
-
-    @Override
-    public void createTask(Task newTask) {
-        super.createTask(newTask);
-        save();
-    }
-
-    @Override
-    public void createEpic(Epic newEpic) {
-        super.createEpic(newEpic);
-        save();
-    }
-
-    @Override
-    public void createSubtask(Subtask newSubtask) {
-        super.createSubtask(newSubtask);
-        save();
-    }
-
-    @Override
-    public void updateTask(Task updatedTask) {
-        super.updateTask(updatedTask);
-        save();
-    }
-
-    @Override
-    public Task getEpic(int id) throws TaskNotFoundException {
-        return super.getEpic(id);
-    }
-
-    @Override
-    public Task getTask(int id) throws TaskNotFoundException {
-        return super.getTask(id);
-    }
-
-    @Override
-    public Task getSubtask(int id) throws TaskNotFoundException {
-        return super.getSubtask(id);
-    }
-
-    @Override
-    public void removeEpic(int id) {
-        super.removeEpic(id);
-        save();
-    }
-
-    @Override
-    public void removeTask(int id) throws TaskNotFoundException {
-        super.removeTask(id);
-        save();
-    }
-
-    @Override
-    public void removeSubtask(int id) {
-        super.removeSubtask(id);
-        save();
-    }
-
-    @Override
-    public LocalDateTime calcEpicEndTime(Epic epic) {
-        return super.calcEpicEndTime(epic);
-    }
-
-    @Override
-    public Duration calcEpicDuration(Epic epic) {
-        return super.calcEpicDuration(epic);
-    }
-
-    @Override
-    public Status calcEpicStatus(Epic epic) {
-        return super.calcEpicStatus(epic);
-    }
-
-    @Override
-    public LocalDateTime calcEpicStartTime(Epic epic) {
-        return super.calcEpicStartTime(epic);
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return super.getHistory();
-    }
 }
