@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import ru.yandex.practicum.kanban.KVClient;
 import ru.yandex.practicum.kanban.exceptions.ManagerSaveException;
+import ru.yandex.practicum.kanban.model.Epic;
+import ru.yandex.practicum.kanban.model.Subtask;
 import ru.yandex.practicum.kanban.model.Task;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.*;
 
 public class HttpTaskManager extends SavingTaskManager {
     private static final String SUBTASKS_KEY = "skey";
@@ -47,16 +49,22 @@ public class HttpTaskManager extends SavingTaskManager {
     }
 
     public void load() throws IOException, URISyntaxException, InterruptedException {
-        subtasks.putAll(gson.fromJson(kvClient.load(SUBTASKS_KEY), new TypeToken<>() {
-        }));
-        tasks.putAll(gson.fromJson(kvClient.load(TASKS_KEY), new TypeToken<>() {
-        }));
-        epics.putAll(gson.fromJson(kvClient.load(EPICS_KEY), new TypeToken<>() {
-        }));
-        prioritizedTasks.addAll(gson.fromJson(kvClient.load(PRIORITIZED_TASKS_KEY), new TypeToken<>() {
-        }));
-        List<Task> tempHistory = gson.fromJson(kvClient.load(HISTORY_KEY), new TypeToken<>() {
+        Map<Integer, Subtask> tempSubtasks = gson.fromJson(kvClient.load(SUBTASKS_KEY), new TypeToken<>() {
         });
+        subtasks.putAll(Optional.ofNullable(tempSubtasks).orElse(new HashMap<>()));
+        Map<Integer, Task> tempTasks = gson.fromJson(kvClient.load(TASKS_KEY), new TypeToken<>() {
+        });
+        tasks.putAll(Optional.ofNullable(tempTasks).orElse(new HashMap<>()));
+        Map<Integer, Epic> tempEpics = gson.fromJson(kvClient.load(EPICS_KEY), new TypeToken<>() {
+        });
+        epics.putAll(Optional.ofNullable(tempEpics).orElse(new HashMap<>()));
+
+        Set<Task> priorTasks = gson.fromJson(kvClient.load(PRIORITIZED_TASKS_KEY), new TypeToken<>() {
+        });
+        prioritizedTasks.addAll(Optional.ofNullable(priorTasks).orElse(new HashSet<>()));
+        List<Task> history = gson.fromJson(kvClient.load(HISTORY_KEY), new TypeToken<>() {
+        });
+        List<Task> tempHistory = Optional.ofNullable(history).orElse(new ArrayList<>());
         for (Task task : tempHistory) {
             getHistoryManager().add(task);
         }

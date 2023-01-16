@@ -34,7 +34,12 @@ public class KVClient {
                 .uri(new URI(kvServerUrl + "/load/" + key + "?API_TOKEN=" + token))
                 .GET()
                 .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            return null;
+        }
         return response.body();
     }
 
