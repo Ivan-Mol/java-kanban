@@ -28,21 +28,24 @@ public abstract class SavingTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createTask(Task newTask) {
-        super.createTask(newTask);
+    public Task createTask(Task newTask) {
+        Task t = super.createTask(newTask);
         save();
+        return t;
     }
 
     @Override
-    public void createEpic(Epic newEpic) {
-        super.createEpic(newEpic);
+    public Epic createEpic(Epic newEpic) {
+        Epic e = super.createEpic(newEpic);
         save();
+        return e;
     }
 
     @Override
-    public void createSubtask(Subtask newSubtask) {
-        super.createSubtask(newSubtask);
+    public Subtask createSubtask(Subtask newSubtask) {
+        Subtask s = super.createSubtask(newSubtask);
         save();
+        return s;
     }
 
     @Override

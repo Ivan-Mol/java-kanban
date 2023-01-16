@@ -26,11 +26,11 @@ public interface TaskManager {
 
     void removeAllSubtasks();
 
-    void createTask(Task newTask);
+    Task createTask(Task newTask);
 
-    void createEpic(Epic newEpic);
+    Epic createEpic(Epic newEpic);
 
-    void createSubtask(Subtask newSubtask);
+    Subtask createSubtask(Subtask newSubtask);
 
     void updateTask(Task updatedTask);
 

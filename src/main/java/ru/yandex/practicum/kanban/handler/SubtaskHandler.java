@@ -48,7 +48,7 @@ public class SubtaskHandler extends BaseHandler {
         throw new UnexpectedException("Method " + requestMethod + " is not supported");
     }
 
-    private String postSubtaskToManager(HttpExchange httpExchange) throws IOException {
+    private Object postSubtaskToManager(HttpExchange httpExchange) throws IOException {
         Subtask subtaskFromJson = null;
         String reqBody = new String(httpExchange.getRequestBody().readAllBytes());
         try {
@@ -59,10 +59,9 @@ public class SubtaskHandler extends BaseHandler {
         try {
             manager.getSubtask(subtaskFromJson.getId());
             manager.updateTask(subtaskFromJson);
-            return "Subtask updated";
+            return reqBody;
         } catch (TaskNotFoundException e) {
-            manager.createSubtask(subtaskFromJson);
-            return "Epic Added";
+           return manager.createSubtask(subtaskFromJson);
         }
     }
 }

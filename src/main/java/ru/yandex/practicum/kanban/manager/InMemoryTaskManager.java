@@ -88,7 +88,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createTask(Task newTask) {
+    public Task createTask(Task newTask) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newTask != null) {
             setIdIfNull(newTask);
@@ -97,19 +97,21 @@ public class InMemoryTaskManager implements TaskManager {
                 prioritizedTasks.add(newTask);
             }
         }
+        return newTask;
     }
 
     @Override
-    public void createEpic(Epic newEpic) {
+    public Epic createEpic(Epic newEpic) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newEpic != null) {
             setIdIfNull(newEpic);
             epics.put(newEpic.getId(), newEpic);
         }
+        return newEpic;
     }
 
     @Override
-    public void createSubtask(Subtask newSubtask) {
+    public Subtask createSubtask(Subtask newSubtask) {
         //Создание. Сам объект должен передаваться в качестве параметра.
         if (newSubtask != null) {
             setIdIfNull(newSubtask);
@@ -123,6 +125,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
         }
+        return newSubtask;
     }
 
     @Override

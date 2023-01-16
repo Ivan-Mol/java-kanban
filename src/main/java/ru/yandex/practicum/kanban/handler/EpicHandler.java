@@ -45,7 +45,7 @@ public class EpicHandler extends BaseHandler {
         throw new UnexpectedException("Method " + requestMethod + " is not supported");
     }
 
-    private String postEpicToManager(HttpExchange httpExchange) throws IOException {
+    private Object postEpicToManager(HttpExchange httpExchange) throws IOException {
         Epic epicFromJson = null;
         String reqBody = new String(httpExchange.getRequestBody().readAllBytes());
         try {
@@ -56,10 +56,9 @@ public class EpicHandler extends BaseHandler {
         try {
             manager.getEpic(epicFromJson.getId());
             manager.updateTask(epicFromJson);
-            return "Epic updated";
+            return reqBody;
         } catch (TaskNotFoundException e) {
-            manager.createEpic(epicFromJson);
-            return "Epic Added";
+            return manager.createEpic(epicFromJson);
         }
     }
 }

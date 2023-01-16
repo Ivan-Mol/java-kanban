@@ -44,7 +44,7 @@ public class TaskHandler extends BaseHandler {
         throw new UnexpectedException("Method " + requestMethod + " is not supported");
     }
 
-    private String postTaskToManager(HttpExchange httpExchange) throws IOException {
+    private Object postTaskToManager(HttpExchange httpExchange) throws IOException {
         Task taskFromJson = null;
         String reqBody = new String(httpExchange.getRequestBody().readAllBytes());
         try {
@@ -55,10 +55,10 @@ public class TaskHandler extends BaseHandler {
         try {
             manager.getTask(taskFromJson.getId());
             manager.updateTask(taskFromJson);
-            return "Task updated";
+            return reqBody;
         } catch (TaskNotFoundException e) {
-            manager.createTask(taskFromJson);
-            return "Task Added";
+           return manager.createTask(taskFromJson);
+
         }
     }
 }
