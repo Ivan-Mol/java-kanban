@@ -19,7 +19,7 @@ public class EpicHandler extends BaseHandler {
     }
 
     @Override
-    protected Object handleInner(HttpExchange httpExchange) throws IOException, TaskNotFoundException, IncorrectTaskException {
+    protected Object handleInner(HttpExchange httpExchange) throws IOException {
         String requestMethod = httpExchange.getRequestMethod(); //метод запроса GET POST DELETE
         String query = httpExchange.getRequestURI().getQuery(); //param1=val1&param2=val2...
 
@@ -45,7 +45,7 @@ public class EpicHandler extends BaseHandler {
         throw new UnexpectedException("Method " + requestMethod + " is not supported");
     }
 
-    private String postEpicToManager(HttpExchange httpExchange) throws IOException, IncorrectTaskException, TaskNotFoundException {
+    private String postEpicToManager(HttpExchange httpExchange) throws IOException {
         Epic epicFromJson = null;
         String reqBody = new String(httpExchange.getRequestBody().readAllBytes());
         try {

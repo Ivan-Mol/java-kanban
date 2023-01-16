@@ -18,7 +18,7 @@ public class SubtaskHandler extends BaseHandler {
     }
 
     @Override
-    protected Object handleInner(HttpExchange httpExchange) throws IOException, TaskNotFoundException, IncorrectTaskException {
+    protected Object handleInner(HttpExchange httpExchange) throws IOException{
         String requestMethod = httpExchange.getRequestMethod(); //метод запроса GET POST DELETE
         String path = httpExchange.getRequestURI().getPath(); //путь запроса от /tasks/
         String query = httpExchange.getRequestURI().getQuery(); //param1=val1&param2=val2...
@@ -48,7 +48,7 @@ public class SubtaskHandler extends BaseHandler {
         throw new UnexpectedException("Method " + requestMethod + " is not supported");
     }
 
-    private String postSubtaskToManager(HttpExchange httpExchange) throws IOException, IncorrectTaskException {
+    private String postSubtaskToManager(HttpExchange httpExchange) throws IOException {
         Subtask subtaskFromJson = null;
         String reqBody = new String(httpExchange.getRequestBody().readAllBytes());
         try {

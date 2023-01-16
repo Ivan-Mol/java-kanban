@@ -30,7 +30,7 @@ public abstract class BaseHandler implements HttpHandler {
         }
     }
 
-    protected abstract Object handleInner(HttpExchange exchange) throws IOException, TaskNotFoundException, IncorrectTaskException;
+    protected abstract Object handleInner(HttpExchange exchange) throws IOException;
 
     private void writeResponse(HttpExchange exchange,
                                Object responseObj,
