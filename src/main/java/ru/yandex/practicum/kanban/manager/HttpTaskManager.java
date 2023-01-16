@@ -37,10 +37,10 @@ public class HttpTaskManager extends SavingTaskManager {
             String stringEpic = gson.toJson(epics);
             kvClient.put(EPICS_KEY, stringEpic);
 
-            String stringPrioritizedtasks = gson.toJson(subtasks);
+            String stringPrioritizedtasks = gson.toJson(getPrioritizedTasks());
             kvClient.put(PRIORITIZED_TASKS_KEY, stringPrioritizedtasks);
 
-            String stringHistory = gson.toJson(getHistoryManager().getHistory());
+            String stringHistory = gson.toJson(getHistory());
             kvClient.put(HISTORY_KEY, stringHistory);
 
         } catch (IOException | InterruptedException | URISyntaxException e) {
